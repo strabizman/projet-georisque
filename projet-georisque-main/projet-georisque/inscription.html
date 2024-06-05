@@ -47,7 +47,7 @@
         <small id="numeroshelp" class="form-text text-muted"></small> <br>
 
         <label for="Mot de passe">Mot de passe</label>
-        <input type="password1" class="form-control" id="password," aria-describedby="passwordhelp"
+        <input type="password1" class="form-control" id="password" aria-describedby="passwordhelp"
             placeholder="Noter votre Mots de passe" required>
         <small id="passwordhelp" class="form-text text-muted">
             <br>Votre Mot de passe doit contenir une Majuscule,un minuscule et un caractére spéciale</small> <br>
@@ -76,13 +76,15 @@
 
         var email = document.getElementById('email').value;
         var password = document.getElementById('password').value;
-        var confirmPassword = document.getElementById('password2').value;
+        var password2 = document.getElementById('password2').value;
         var errorMessage = document.getElementById('errorMessage');
 
-        if (validateEmail(email) && validatePassword(password)) {
+        if (validateEmail(email) && validatePassword(password) && passwordsMatch(password, password2)) {
+            localStorage.setItem('email', email);
+            localStorage.setItem('password', password);
             window.location.href = "profil.html";
         } else {
-            errorMessage.textContent = 'Veuillez entrer un email et un mot de passe valides.';
+            errorMessage.textContent = 'Veuillez entrer un email et un mot de passe valides, et vous assurer que les mots de passe correspondent.';
         }
     });
 
@@ -99,11 +101,14 @@
     function validatePassword(password) {
         var re = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
         return re.test(password);
-    };
-    function passwordsMatch(password, confirmPassword) {
-            return password === confirmPassword;
+    }
+
+    function passwordsMatch(password, password2) {
+        if (password !== password2) {
+            document.getElementById('errorMessage').textContent = 'Les mots de passe ne correspondent pas.';
+            return false;
         }
-
+        return true;
+    }
 </script>
-
 </html>
