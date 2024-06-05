@@ -69,46 +69,49 @@
 
 <footer>
 </footer>
-
 <script>
-    document.getElementById('myForm').addEventListener('submit', function (event) {
-        event.preventDefault();
+document.getElementById('myForm').addEventListener('submit', function (event) {
+    event.preventDefault();
 
-        var email = document.getElementById('email').value;
-        var password = document.getElementById('password').value;
-        var password2 = document.getElementById('password2').value;
-        var errorMessage = document.getElementById('errorMessage');
+    var email = document.getElementById('email').value;
+    var password = document.getElementById('password').value;
+    var password2 = document.getElementById('password2').value;
+    var errorMessage = document.getElementById('errorMessage');
 
-        if (validateEmail(email) && validatePassword(password) && passwordsMatch(password, password2)) {
-            localStorage.setItem('email', email);
-            localStorage.setItem('password', password);
-            window.location.href = "profil.html";
-        } else {
-            errorMessage.textContent = 'Veuillez entrer un email et un mot de passe valides, et vous assurer que les mots de passe correspondent.';
-        }
-    });
-
-    document.getElementById('resetButton').addEventListener('click', function () {
-        document.getElementById('myForm').reset();
-        document.getElementById('errorMessage').textContent = '';
-    });
-
-    function validateEmail(email) {
-        var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return re.test(email);
+    if (validateEmail(email) && validatePassword(password) && passwordsMatch(password, password2)) {
+        localStorage.setItem('email', email);
+        localStorage.setItem('password', password);
+        window.location.href = "profil.html";
+    } else {
+        errorMessage.textContent = 'Veuillez entrer un email et un mot de passe valides, et vous assurer que les mots de passe correspondent.';
     }
+});
 
-    function validatePassword(password) {
-        var re = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
-        return re.test(password);
-    }
+document.getElementById('resetButton').addEventListener('click', function () {
+    document.getElementById('myForm').reset();
+    document.getElementById('errorMessage').textContent = '';
+});
 
-    function passwordsMatch(password, password2) {
-        if (password !== password2) {
-            document.getElementById('errorMessage').textContent = 'Les mots de passe ne correspondent pas.';
-            return false;
-        }
-        return true;
+function validateEmail(email) {
+    var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+}
+
+function validatePassword(password) {
+    var re = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+    return re.test(password);
+}
+
+function passwordsMatch(password, password2) {
+    if (password !== password2) {
+        document.getElementById('errorMessage').textContent = 'Les mots de passe ne correspondent pas.';
+        return false;
     }
+    return true;
+}
+
+document.getElementById('resetButton').addEventListener('click', function () {
+    document.getElementById('myForm').reset();
+});
 </script>
 </html>
