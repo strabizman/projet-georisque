@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Réinitialisation de Mot de Passe</title>
+</head>
+<body>
+    <form id="resetRequestForm">
+        <label for="resetEmail">Email:</label>
+        <input type="email" id="resetEmail" name="email" required><br><br>
+        
+        <button type="submit">Demander la Réinitialisation</button>
+    </form>
+    
+    <p id="resetRequestMessage" style="color: red;"></p>
+
+    <script>
+        document.getElementById('resetRequestForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            var resetEmail = document.getElementById('resetEmail').value;
+            var resetRequestMessage = document.getElementById('resetRequestMessage');
+
+            
+            var storedEmail = localStorage.getItem('email');
+
+            if (resetEmail === storedEmail) {
+                
+                window.location.href = "new_password.html";
+            } else {
+                resetRequestMessage.textContent = 'Email non trouvé. Veuillez réessayer.';
+            }
+        });
+    </script>
+</body>
+</html>
