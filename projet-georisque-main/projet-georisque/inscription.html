@@ -7,7 +7,7 @@
     <title>TerraRisk</title>
     <link rel="stylesheet" href="CSS/style.css">
     <link rel="stylesheet" href="CSS/formulaire.css">
-
+    <script src="js/formulaire.js"></script>
 </head>
 <ul>
     <li><a href="Accueil.html" target="_self" title="Accueil">Accueil</a></li>
@@ -49,21 +49,23 @@
         <small id="numeroshelp" class="form-text text-muted"></small> <br>
 
         <label for="Mot de passe">Mot de passe</label>
-        <input type="password" class="form-control" id="password" aria-describedby="passwordhelp"
+        <input type="password1" class="form-control" id="password" aria-describedby="passwordhelp"
             placeholder="Noter votre Mots de passe">
         <small id="passwordhelp" class="form-text text-muted"></small> <br>
 
         <label for="Mot de passe">Mot de passe</label>
-        <input type="password" class="form-control" id="password" aria-describedby="passwordhelp"
+        <input type="password1" class="form-control" id="password" aria-describedby="passwordhelp"
             placeholder="Valider votre Mots de passe">
         <small id="passwordhelp" class="form-text text-muted"></small>
+
+        <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="Check1">
+            <label class="form-check-label" for="Check1">Accepter les conditions d'utilisations</label>
+        </div>
+        <button type="submit" class="btn btn-primary">Valider</button>
+        <button type="reset" class="btn btn-primary">Effacer</button>
+
     </form>
-    <div class="form-check">
-        <input type="checkbox" class="form-check-input" id="Check1">
-        <label class="form-check-label" for="Check1">Accepter les conditions d'utilisations</label>
-      </div>
-      <button type="submit" class="btn btn-primary">Valider</button>
-    <button type="reset"  class="btn btn-primary">Effacer</button>
 </body>
 <footer>
 
