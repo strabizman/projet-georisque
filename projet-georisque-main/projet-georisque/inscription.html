@@ -17,20 +17,19 @@
 
 <body>
     <h2>Veuillez vous inscrire</h2>
-    <form action="inscription">
+    <form id="myForm">
         <label for="name">Nom</label>
-        <input type="text" class="form-control" id="nom" aria-describedby="nomhelp" placeholder="Noter votre Nom">
-        <small id="nomhelp" class="form-text text-muted"></small>
+        <input type="text" class="form-control" id="nom" aria-describedby="nomhelp" placeholder="Noter votre Nom" required>
+        <small id="nomhelp" class="form-text text-muted"></small> <br>
 
         <label for="name">Prenom</label>
         <input type="text" class="form-control" id="prenom" aria-describedby="prenomhelp"
-            placeholder="Noter votre Prenom">
+            placeholder="Noter votre Prenom" required>
         <small id="prenomhelp" class="form-text text-muted"></small> <br>
 
-        <label for="Email1">Email address</label>
-        <input type="email" class="form-control" id="Email1" aria-describedby="emailHelp"
-            placeholder="Noter votre adresse mail">
-        <small id="emailHelp" class="form-text text-muted"></small> <br>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" placeholder="Noter votre adresse mail" required>
+        <small id="email" class="form-text text-muted"></small> <br>
 
         <label for="Pays">Pays d'origine</label>
         <input type="country" class="form-control" id="pays" aria-describedby="payshelp"
@@ -42,33 +41,69 @@
             placeholder="Noter votre Département">
         <small id="departementhelp" class="form-text text-muted"></small> <br>
 
-
         <label for="Numéros">Numéros de télephone</label>
         <input type="number" class="form-control" id="numeros" aria-describedby="numeroshelp"
             placeholder="Noter votre Numeros de télephone">
         <small id="numeroshelp" class="form-text text-muted"></small> <br>
 
         <label for="Mot de passe">Mot de passe</label>
-        <input type="password1" class="form-control" id="password" aria-describedby="passwordhelp"
-            placeholder="Noter votre Mots de passe">
-        <small id="passwordhelp" class="form-text text-muted"></small> <br>
+        <input type="password1" class="form-control" id="password," aria-describedby="passwordhelp"
+            placeholder="Noter votre Mots de passe" required>
+        <small id="passwordhelp" class="form-text text-muted">
+            <br>Votre Mot de passe doit contenir une Majuscule,un minuscule et un caractére spéciale</small> <br>
 
         <label for="Mot de passe">Mot de passe</label>
-        <input type="password1" class="form-control" id="password" aria-describedby="passwordhelp"
-            placeholder="Valider votre Mots de passe">
-        <small id="passwordhelp" class="form-text text-muted"></small>
+        <input type="password1" class="form-control" id="password2" aria-describedby="passwordhelp"
+            placeholder="Valider votre Mots de passe" required>
+        <small id="passwordhelp" class="form-text text-muted"></small> <br>
 
         <div class="form-check">
-            <input type="checkbox" class="form-check-input" id="Check1">
+            <input type="checkbox" class="form-check-input" id="Check1" required>
             <label class="form-check-label" for="Check1">Accepter les conditions d'utilisations</label>
         </div>
-        <button type="submit" class="btn btn-primary">Valider</button>
-        <button type="reset" class="btn btn-primary">Effacer</button>
-
+        <button type="submit">Soumettre</button>
+        <button type="button" id="resetButton">Réinitialiser</button>
     </form>
+    <p id="errorMessage" style="color: red;"></p>
 </body>
-<footer>
 
+<footer>
 </footer>
+
+<script>
+    document.getElementById('myForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        var email = document.getElementById('email').value;
+        var password = document.getElementById('password').value;
+        var confirmPassword = document.getElementById('password2').value;
+        var errorMessage = document.getElementById('errorMessage');
+
+        if (validateEmail(email) && validatePassword(password)) {
+            window.location.href = "profil.html";
+        } else {
+            errorMessage.textContent = 'Veuillez entrer un email et un mot de passe valides.';
+        }
+    });
+
+    document.getElementById('resetButton').addEventListener('click', function () {
+        document.getElementById('myForm').reset();
+        document.getElementById('errorMessage').textContent = '';
+    });
+
+    function validateEmail(email) {
+        var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+    }
+
+    function validatePassword(password) {
+        var re = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+        return re.test(password);
+    };
+    function passwordsMatch(password, confirmPassword) {
+            return password === confirmPassword;
+        }
+
+</script>
 
 </html>
