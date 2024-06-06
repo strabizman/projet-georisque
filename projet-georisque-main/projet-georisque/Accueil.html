@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TerraRisk</title>
     <link rel="stylesheet" href="CSS/style.css">
+
 </head>
 <ul>
     <li><a href="Accueil.html" target="_self" title="Accueil">Accueil</a></li>
@@ -14,6 +15,15 @@
 </ul>
 
 <body>
+    <div id="cookieConsentBanner">
+        <p>
+          En utilisant ce site, vous acceptez nos <a href="conditions.html">Conditions d'utilisation</a>, 
+          <a href="mentions.html">Mentions légales</a> et notre 
+          <a href="confidentialite.html">Politique de confidentialité</a>.
+        </p>
+        <button id="acceptCookieButton">J'accepte</button>
+        <button id="refuseCookieButton">Je refuse</button>
+      </div>
     <header>
         <h1>TerraRisk</h1>
     </header>
@@ -68,6 +78,52 @@
         </main>
     </section>
 </body>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+      //verifie si la personne dit oui
+      if (!getCookie('cookieConsent')) {
+        document.getElementById('cookieConsentBanner').style.display = 'block';
+      }
+    });
+
+    document.getElementById('acceptCookieButton').addEventListener('click', function () {
+      setCookie('cookieConsent', 'true', 365);
+      document.getElementById('cookieConsentBanner').style.display = 'none';
+    });
+
+    document.getElementById('refuseCookieButton').addEventListener('click', function () {
+      setCookie('cookieConsent', 'false', 365);
+      document.getElementById('cookieConsentBanner').style.display = 'none';
+      alert('Vous avez refusé les cookies.C`est pas trés sympa.');
+    });
+
+    // fait fonctionner les cookies
+    function setCookie(name, value, days) {
+      var expires = "";
+      if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+      }
+      document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    }
+
+    function getCookie(name) {
+      var nameEQ = name + "=";
+      var ca = document.cookie.split(';');
+      for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+      }
+      return null;
+    }
+
+    function eraseCookie(name) {
+      document.cookie = name + '=; Max-Age=-99999999;';
+    }
+  </script>
+
 <footer>
     <li><a href="mentionlegal.html" target="_self" title="mentionlegal">Mentions légales</a></li>
     <li><a href="conditionutil.html" target="_self" title="conditionutil">Condition d'utilisation</a></li>
