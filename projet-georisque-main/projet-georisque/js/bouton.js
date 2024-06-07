@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     loadProfileData();
 });
-
+//sert a modifier les info du formulaire
 function editInfo(field) {
     var form = document.getElementById('edit-form');
     var label = document.getElementById('edit-label');
