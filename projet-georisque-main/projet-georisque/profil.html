@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TerraRisk</title>
-    <link rel="stylesheet" href="CSS/style.css">
+    <link rel="stylesheet" href="CSS/bouton.css">
+    
 </head>
 <ul>
     <li><a href="Accueil.html" target="_self" title="Accueil">Accueil</a></li>
@@ -14,10 +15,49 @@
 </ul>
 
 <body>
+<h2>Mon profil</h2>
+
+<div class="dropdown">
+    <button class="dropdown-button">Informations Personnelles</button>
+    <div class="dropdown-content">
+        <button onclick="editInfo('email')">Changer l'Email</button>
+        <button onclick="editInfo('nom')">Changer le Nom</button>
+        <button onclick="editInfo('prenom')">Changer le Prénom</button>
+        <button onclick="editInfo('pays')">Changer le Pays d'Origine</button>
+        <button onclick="editInfo('departement')">Changer le Département</button>
+        <button><a href="resetmdp.html" target="_self" title="resetmdp">Changer le mot de passe</a></button>
+        
+        <form id="edit-form" style="display: none; margin-top: 10px;">
+            <label for="edit-input" id="edit-label"></label>
+            <input type="text" id="edit-input" name="edit-input">
+            <button type="submit">Enregistrer</button>
+        </form>
+    </div>
+</div>
+
+<div class="dropdown">
+    <button class="dropdown-button">Mes recherches et documents</button>
+    <div class="dropdown-content">
+
+    </div>
+</div>
+
+<div class="dropdown">
+    <button class="dropdown-button">Préférence et sécurité</button>
+    <div class="dropdown-content">
+
+    </div>
+</div>
+</div>
 
 </body>
-<footer>
-
+<footer><ul>
+    <li><a href="mentionlegal.html" target="_self" title="mentionlegal">Mentions légales</a></li>
+    <li><a href="conditionutil.html" target="_self" title="conditionutil">Condition d'utilisation</a></li>
+    <li><a href="politiqueconfid.html" target="_self" title="politiqueconfid">Politique de confidentialité</a></li>
+    <li><a href="noscontact.html" target="_self" title="noscontact">Contacts</a></li>
+    <li><a href="remerciment.html" target="_self" title="remerciment">Remerciment</a></li>
+</ul>
 </footer>
-
+<script src="js/bouton.js"></script>
 </html>

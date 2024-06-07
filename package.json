@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "projet-georisque",
   "version": "1.0.0",
   "description": "",
@@ -16,4 +17,10 @@
   }
 
   
+=======
+  "dependencies": {
+    "bootstrap": "^5.3.3",
+    "bootstrap-icons": "^1.11.3"
+  }
+>>>>>>> origin/titiano
 }
