@@ -9,82 +9,79 @@
     <link rel="stylesheet" href="CSS/formulaire.css">
     <script src="js/formulaire.js"></script>
 </head>
-<ul>
-    <li><a href="Accueil.html" target="_self" title="Accueil">Accueil</a></li>
-    <li><a href="Mesrisquesproche.html" target="_self" title="Mesrisquesproches">Mes risques proche</a></li>
-    <li><a href="monprofil.html" target="_self" title="monprofil">Mon profil</a></li>
-</ul>
-
 <body>
+    <ul>
+        <li><a href="Accueil.html" target="_self" title="Accueil">Accueil</a></li>
+        <li><a href="Mesrisquesproche.html" target="_self" title="Mesrisquesproches">Mes risques proche</a></li>
+        <li><a href="monprofil.html" target="_self" title="monprofil">Mon profil</a></li>
+    </ul>
+
     <h2>Veuillez vous inscrire</h2>
     <form id="myForm">
-        <label for="name">Nom</label>
+        <label for="nom">Nom</label>
         <input type="text" class="form-control" id="nom" aria-describedby="nomhelp" placeholder="Noter votre Nom" required>
         <small id="nomhelp" class="form-text text-muted"></small> <br>
 
-        <label for="name">Prenom</label>
-        <input type="text" class="form-control" id="prenom" aria-describedby="prenomhelp"
-            placeholder="Noter votre Prenom" required>
+        <label for="prenom">Prenom</label>
+        <input type="text" class="form-control" id="prenom" aria-describedby="prenomhelp" placeholder="Noter votre Prenom" required>
         <small id="prenomhelp" class="form-text text-muted"></small> <br>
 
         <label for="email">Email:</label>
         <input type="email" id="email" name="email" placeholder="Noter votre adresse mail" required>
         <small id="email" class="form-text text-muted"></small> <br>
 
-        <label for="Pays">Pays d'origine</label>
-        <input type="country" class="form-control" id="pays" aria-describedby="payshelp"
-            placeholder="Noter votre Pays D'origine">
+        <label for="pays">Pays d'origine</label>
+        <input type="text" class="form-control" id="pays" aria-describedby="payshelp" placeholder="Noter votre Pays D'origine">
         <small id="payshelp" class="form-text text-muted"></small> <br>
 
-        <label for="Département">Département</label>
-        <input type="number" class="form-control" id="departement" aria-describedby="departementhelp"
-            placeholder="Noter votre Département">
+        <label for="departement">Département</label>
+        <input type="number" class="form-control" id="departement" aria-describedby="departementhelp" placeholder="Noter votre Département">
         <small id="departementhelp" class="form-text text-muted"></small> <br>
 
-        <label for="Numéros">Numéros de télephone</label>
-        <input type="number" class="form-control" id="numeros" aria-describedby="numeroshelp"
-            placeholder="Noter votre Numeros de télephone">
+        <label for="numeros">Numéros de téléphone</label>
+        <input type="tel" class="form-control" id="numeros" aria-describedby="numeroshelp" placeholder="Noter votre Numéros de téléphone">
         <small id="numeroshelp" class="form-text text-muted"></small> <br>
 
-        <label for="Mot de passe">Mot de passe</label>
-        <input type="password1" class="form-control" id="password" aria-describedby="passwordhelp"
-            placeholder="Noter votre Mots de passe" required>
+        <label for="password">Mot de passe</label>
+        <input type="password" class="form-control" id="password" aria-describedby="passwordhelp" placeholder="Noter votre Mot de passe" required>
         <small id="passwordhelp" class="form-text text-muted">
-            <br>Votre Mot de passe doit contenir une Majuscule,un minuscule et un caractére spéciale</small> <br>
+            <br>Votre Mot de passe doit contenir une Majuscule, un minuscule et un caractère spécial
+        </small> <br>
 
-        <label for="Mot de passe">Mot de passe</label>
-        <input type="password1" class="form-control" id="password2" aria-describedby="passwordhelp"
-            placeholder="Valider votre Mots de passe" required>
+        <label for="password2">Confirmer Mot de passe</label>
+        <input type="password" class="form-control" id="password2" aria-describedby="passwordhelp" placeholder="Valider votre Mot de passe" required>
         <small id="passwordhelp" class="form-text text-muted"></small> <br>
 
         <div class="form-check">
             <input type="checkbox" class="form-check-input" id="Check1" required>
-            <label class="form-check-label" for="Check1">Accepter les conditions d'utilisations</label>
+            <label class="form-check-label" for="Check1">Accepter les conditions d'utilisation</label>
         </div>
         <button type="submit">Soumettre</button>
         <button type="button" id="resetButton">Réinitialiser</button>
     </form>
     <p id="errorMessage" style="color: red;"></p>
 </body>
-
-<footer>
-    <li><a href="mentionlegal.html" target="_self" title="mentionlegal">Mentions légales</a></li>
-    <li><a href="conditionutil.html" target="_self" title="conditionutil">Condition d'utilisation</a></li>
-    <li><a href="politiqueconfid.html" target="_self" title="politiqueconfid">Politique de confidentialité</a></li>
-    <li><a href="noscontact.html" target="_self" title="noscontact">Contacts</a></li>
-    <li><a href="remerciment.html" target="_self" title="remerciment">Remerciment</a></li>
-</footer>
 <script>
 document.getElementById('myForm').addEventListener('submit', function (event) {
     event.preventDefault();
 
+    var nom = document.getElementById('nom').value;
+    var prenom = document.getElementById('prenom').value;
     var email = document.getElementById('email').value;
+    var pays = document.getElementById('pays').value;
+    var departement = document.getElementById('departement').value;
+    var numeros = document.getElementById('numeros').value;
     var password = document.getElementById('password').value;
     var password2 = document.getElementById('password2').value;
     var errorMessage = document.getElementById('errorMessage');
 
     if (validateEmail(email) && validatePassword(password) && passwordsMatch(password, password2)) {
+        localStorage.setItem('nom', nom);
+        localStorage.setItem('prenom', prenom);
         localStorage.setItem('email', email);
+        localStorage.setItem('pays', pays);
+        localStorage.setItem('departement', departement);
+        localStorage.setItem('numeros', numeros);
         localStorage.setItem('password', password);
         window.location.href = "profil.html";
     } else {
@@ -114,9 +111,15 @@ function passwordsMatch(password, password2) {
     }
     return true;
 }
-
-document.getElementById('resetButton').addEventListener('click', function () {
-    document.getElementById('myForm').reset();
-});
 </script>
+<footer>
+    <ul>
+        <li><a href="mentionlegal.html" target="_self" title="mentionlegal">Mentions légales</a></li>
+        <li><a href="conditionutil.html" target="_self" title="conditionutil">Condition d'utilisation</a></li>
+        <li><a href="politiqueconfid.html" target="_self" title="politiqueconfid">Politique de confidentialité</a></li>
+        <li><a href="noscontact.html" target="_self" title="noscontact">Contacts</a></li>
+        <li><a href="remerciment.html" target="_self" title="remerciment">Remerciement</a></li>
+    </ul>
+</footer>
+
 </html>
