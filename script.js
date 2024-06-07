@@ -2,6 +2,7 @@
 const UrlInondation = 'https://www.georisques.gouv.fr/api/v1/gaspar/azi';
 const UrlRadon = 'https://www.georisques.gouv.fr/api/v1/radon';
 const UrlClay = 'https://www.georisques.gouv.fr/api/v1/rga';
+const UrlSeismic = 'https://www.georisques.gouv.fr/api/v1/zonage_sismique';
 const UrlReport = 'https://www.georisques.gouv.fr/api//v1/rapport_pdf';
 const LocalProxy = 'http://localhost:3000/api';
 
@@ -34,16 +35,19 @@ async function geocodeAddress(address) {
 
 async function fetchFloodZones(latitude, longitude) {
     const params = {
-        rayon: 1000,
         latlon: `${longitude},${latitude}`,
-        page: 1,
-        page_size: 10
+  
+       
     };
 
     const urlWithParams = buildUrl(UrlInondation, params);
+    
+    // Ajouter cette ligne pour afficher l'URL dans la console
+    console.log('URL envoyée à l\'API pour les zones inondables:', urlWithParams);
 
     try {
         const response = await fetch(urlWithParams);
+        
         if (!response.ok) {
             throw new Error(`Erreur HTTP ! statut : ${response.status}`);
         }
@@ -112,6 +116,46 @@ async function fetchClayRisk(latitude, longitude) {
         return data;
     } catch (error) {
         console.error('Erreur lors de la récupération des données de gonflement des sols argileux:', error);
+        return null;
+    }
+}
+
+async function fetchSeismicZones(rayon, latlon, codeInsee) {
+    const params = {};
+    if (rayon && latlon) {
+        params.rayon = rayon;
+        params.latlon = latlon;
+    } else if (codeInsee) {
+        params.code_insee = codeInsee;
+    } else {
+        throw new Error('Paramètres manquants pour la recherche des zones sismiques.');
+    }
+
+    const urlWithParams = buildUrl(UrlSeismic, params);
+
+    try {
+        const response = await fetch(urlWithParams);
+        if (!response.ok) {
+            throw new Error(`Erreur HTTP ! statut : ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Données reçues des zones sismiques:', data);
+
+        // Vérification et extraction des données
+        if (data.data && data.data.length > 0) {
+            // Extraire les informations de sismicité
+            return data.data.map(item => ({
+                codeInsee: item.code_insee,
+                commune: item.libelle_commune,
+                codeZone: item.code_zone,
+                sismicite: item.zone_sismicite
+            }));
+        } else {
+            return [];
+        }
+    } catch (error) {
+        console.error('Erreur lors de la récupération des données des zones sismiques:', error);
         return null;
     }
 }
@@ -207,9 +251,10 @@ document.getElementById('searchForm').addEventListener('submit', async function(
         if (coordinates) {
             console.log('Coordonnées de l\'adresse:', coordinates);
 
-            const floodZones = await fetchFloodZones(coordinates.latitude, coordinates.longitude);
+            const floodZones = await fetchFloodZones(coordinates.latitude, coordinates.longitude, coordinates.codeInsee);
             const radonZones = await fetchRadonZones(coordinates.codeInsee);
             const clayRisk = await fetchClayRisk(coordinates.latitude, coordinates.longitude);
+            const seismicZones = await fetchSeismicZones(1000, `${coordinates.longitude},${coordinates.latitude}`, coordinates.codeInsee);
 
             let resultsText = `Latitude: ${coordinates.latitude}, Longitude: ${coordinates.longitude}\n`;
 
@@ -229,8 +274,15 @@ document.getElementById('searchForm').addEventListener('submit', async function(
                 resultsText += `Exposition au risque de gonflement des sols argileux : ${clayRisk.exposition} (${clayRisk.codeExposition}).\n`;
             }
 
+            if (seismicZones && seismicZones.length > 0) {
+                resultsText += `L'adresse est en zone sismique avec les détails suivants : ${seismicZones.map(zone => `${zone.commune} (Zone: ${zone.codeZone}, Sismicité: ${zone.sismicite})`).join(', ')}.\n`;
+            } else {
+                resultsText += `L'adresse n'est pas en zone sismique.\n`;
+            }
+
             document.getElementById('results').innerText = resultsText;
 
+            // Générer le rapport PDF
             const latlon = `${coordinates.longitude},${coordinates.latitude}`;
             await generateReport(coordinates.codeInsee, latlon, coordinates.fullAddress);
         } else {
@@ -239,6 +291,47 @@ document.getElementById('searchForm').addEventListener('submit', async function(
     } else {
         document.getElementById('results').innerText = 'Veuillez entrer une adresse.';
     }
+});
+document.addEventListener("DOMContentLoaded", function() {
+    // Initialiser la carte centrée sur la France
+    const map = L.map('map').setView([46.603354, 1.888334], 6);
+
+    // Ajouter une couche de tuiles (par exemple OpenStreetMap)
+    const baseLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // Ajouter une couche WMS pour les zones inondables
+    const floodLayer = L.tileLayer.wms('https://georisques.gouv.fr/services', {
+        layers: 'PPRN_COMMUNE_RISQINOND_APPROUV', // Remplacer par le nom de la couche des zones inondables
+        format: 'image/png',
+        transparent: true,
+        attribution: '© GéoRisques'
+    });
+
+    // Ajouter une couche WMS pour les risques radon
+    const radonLayer = L.tileLayer.wms('https://georisques.gouv.fr/services', {
+        layers: 'RADON', // Remplacer par le nom de la couche des risques radon
+        format: 'image/png',
+        transparent: true,
+        attribution: '© GéoRisques'
+    });
+
+    const clayLayer = L.tileLayer.wms('https://georisques.gouv.fr/services', {
+        layers: 'ALEARG', 
+        format: 'image/png',
+        transparent: true,
+        attribution: '© GéoRisques'
+    });
+
+    // Créer un contrôle de couches
+    const overlayMaps = {
+        "Zones Inondables": floodLayer,
+        "Risques Radon": radonLayer,
+        "Gonflement argile" : clayLayer
+    };
+
+    L.control.layers(null, overlayMaps).addTo(map);
 });
 
 window.onload = setupAutocomplete;
