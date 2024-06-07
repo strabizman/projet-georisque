@@ -2,23 +2,6 @@
 <html>
 <head>
     <title>Réinitialisation de Mot de Passe</title>
-</head>
-<ul>
-    <li><a href="Accueil.html" target="_self" title="Accueil">Accueil</a></li>
-    <li><a href="Mesrisquesproche.html" target="_self" title="Mesrisquesproches">Mes risques proche</a></li>
-    <li><a href="monprofil.html" target="_self" title="monprofil">Mon profil</a></li>
-  </ul>
-  
-<body>
-    <form id="resetRequestForm">
-        <label for="resetEmail">Email:</label>
-        <input type="email" id="resetEmail" name="email" required><br><br>
-        
-        <button type="submit">Demander la Réinitialisation</button>
-    </form>
-    
-    <p id="resetRequestMessage" style="color: red;"></p>
-
     <script>
         document.getElementById('resetRequestForm').addEventListener('submit', function (event) {
             event.preventDefault();
@@ -37,6 +20,24 @@
             }
         });
     </script>
+</head>
+<ul>
+    <li><a href="Accueil.html" target="_self" title="Accueil">Accueil</a></li>
+    <li><a href="Mesrisquesproche.html" target="_self" title="Mesrisquesproches">Mes risques proche</a></li>
+    <li><a href="monprofil.html" target="_self" title="monprofil">Mon profil</a></li>
+  </ul>
+  
+<body>
+    <form id="resetRequestForm">
+        <label for="resetEmail">Email:</label>
+        <input type="email" id="resetEmail" name="email" required><br><br>
+        
+        <button type="submit">Demander la Réinitialisation</button>
+    </form>
+    
+    <p id="resetRequestMessage" style="color: red;"></p>
+
+
 </body>
 <footer><ul>
     <li><a href="mentionlegal.html" target="_self" title="mentionlegal">Mentions légales</a></li>

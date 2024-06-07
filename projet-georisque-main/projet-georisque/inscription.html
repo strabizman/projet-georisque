@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 
 <head>
     <meta charset="UTF-8">
@@ -7,7 +7,57 @@
     <title>TerraRisk</title>
     <link rel="stylesheet" href="CSS/style.css">
     <link rel="stylesheet" href="CSS/formulaire.css">
-    <script src="js/formulaire.js"></script>
+    <script>
+        document.getElementById('myForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+        
+            var nom = document.getElementById('nom').value;
+            var prenom = document.getElementById('prenom').value;
+            var email = document.getElementById('email').value;
+            var pays = document.getElementById('pays').value;
+            var departement = document.getElementById('departement').value;
+            var numeros = document.getElementById('numeros').value;
+            var password = document.getElementById('password').value;
+            var password2 = document.getElementById('password2').value;
+            var errorMessage = document.getElementById('errorMessage');
+        
+            if (validateEmail(email) && validatePassword(password) && passwordsMatch(password, password2)) {
+                localStorage.setItem('nom', nom);
+                localStorage.setItem('prenom', prenom);
+                localStorage.setItem('email', email);
+                localStorage.setItem('pays', pays);
+                localStorage.setItem('departement', departement);
+                localStorage.setItem('numeros', numeros);
+                localStorage.setItem('password', password);
+                window.location.href = "profil.html";
+            } else {
+                errorMessage.textContent = 'Veuillez entrer un email et un mot de passe valides, et vous assurer que les mots de passe correspondent.';
+            }
+        });
+        
+        document.getElementById('resetButton').addEventListener('click', function () {
+            document.getElementById('myForm').reset();
+            document.getElementById('errorMessage').textContent = '';
+        });
+        
+        function validateEmail(email) {
+            var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+        
+        function validatePassword(password) {
+            var re = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+            return re.test(password);
+        }
+        
+        function passwordsMatch(password, password2) {
+            if (password !== password2) {
+                document.getElementById('errorMessage').textContent = 'Les mots de passe ne correspondent pas.';
+                return false;
+            }
+            return true;
+        }
+        </script>
 </head>
 <body>
     <ul>
@@ -61,57 +111,7 @@
     </form>
     <p id="errorMessage" style="color: red;"></p>
 </body>
-<script>
-document.getElementById('myForm').addEventListener('submit', function (event) {
-    event.preventDefault();
 
-    var nom = document.getElementById('nom').value;
-    var prenom = document.getElementById('prenom').value;
-    var email = document.getElementById('email').value;
-    var pays = document.getElementById('pays').value;
-    var departement = document.getElementById('departement').value;
-    var numeros = document.getElementById('numeros').value;
-    var password = document.getElementById('password').value;
-    var password2 = document.getElementById('password2').value;
-    var errorMessage = document.getElementById('errorMessage');
-
-    if (validateEmail(email) && validatePassword(password) && passwordsMatch(password, password2)) {
-        localStorage.setItem('nom', nom);
-        localStorage.setItem('prenom', prenom);
-        localStorage.setItem('email', email);
-        localStorage.setItem('pays', pays);
-        localStorage.setItem('departement', departement);
-        localStorage.setItem('numeros', numeros);
-        localStorage.setItem('password', password);
-        window.location.href = "profil.html";
-    } else {
-        errorMessage.textContent = 'Veuillez entrer un email et un mot de passe valides, et vous assurer que les mots de passe correspondent.';
-    }
-});
-
-document.getElementById('resetButton').addEventListener('click', function () {
-    document.getElementById('myForm').reset();
-    document.getElementById('errorMessage').textContent = '';
-});
-
-function validateEmail(email) {
-    var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
-}
-
-function validatePassword(password) {
-    var re = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
-    return re.test(password);
-}
-
-function passwordsMatch(password, password2) {
-    if (password !== password2) {
-        document.getElementById('errorMessage').textContent = 'Les mots de passe ne correspondent pas.';
-        return false;
-    }
-    return true;
-}
-</script>
 <footer>
     <ul>
         <li><a href="mentionlegal.html" target="_self" title="mentionlegal">Mentions légales</a></li>
