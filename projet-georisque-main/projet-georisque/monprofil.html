@@ -37,7 +37,7 @@
   <p><a href="resetmdp.html">Mot de passe oublié ?</a></p>
   <ul>
     <li>
-        <a href="inscription.html" target="_self" title="inscription">S'inscrire</a>
+      <a href="inscription.html" target="_self" title="inscription">S'inscrire</a>
     </li>
   </ul>
   <script>
@@ -47,7 +47,7 @@
         window.location.href = "profil.html";
       }
     });
-//quand appuyer sur se connecter renvoir vers Monprofil
+    //quand appuyer sur se connecter renvoir vers Monprofil
     document.getElementById('loginForm').addEventListener('submit', function (event) {
       event.preventDefault();
 
@@ -57,7 +57,7 @@
       var storedEmail = localStorage.getItem('email');
       var storedPassword = localStorage.getItem('password');
 
-     
+
       if (loginEmail === storedEmail && loginPassword === storedPassword) {
         localStorage.setItem('isLoggedIn', 'true');
         window.location.href = "profil.html";
@@ -65,20 +65,20 @@
         loginErrorMessage.textContent = 'Identifiants incorrects. Veuillez réessayer.';
       }
     });
-//permet de vider les champs de connexions
+    //permet de vider les champs de connexions
     document.getElementById('resetButton').addEventListener('click', function () {
       document.getElementById('loginForm').reset();
       document.getElementById('loginErrorMessage').textContent = '';
     });
     function validateEmail(loginEmail) {
-    var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
-}
+      var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return re.test(email);
+    }
 
-function validatePassword(loginPassword) {
-    var re = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
-    return re.test(password);
-}
+    function validatePassword(loginPassword) {
+      var re = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+      return re.test(password);
+    }
 
   </script>
 
@@ -87,8 +87,8 @@ function validatePassword(loginPassword) {
   <li><a href="mentionlegal.html" target="_self" title="mentionlegal">Mentions légales</a></li>
   <li><a href="conditionutil.html" target="_self" title="conditionutil">Condition d'utilisation</a></li>
   <li><a href="politiqueconfid.html" target="_self" title="politiqueconfid">Politique de confidentialité</a></li>
-  <li><a href="noscontact.html" target="_self" title="noscontact">Nos contact</a></li>
-  <li><a href="contactétat.html" target="_self" title="contactétat">Numeros vert de l'état</a></li>
+  <li><a href="noscontact.html" target="_self" title="noscontact">Contacts</a></li>
   <li><a href="remerciment.html" target="_self" title="remerciment">Remerciment</a></li>
 </footer>
+
 </html>
