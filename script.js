@@ -316,9 +316,49 @@ document.addEventListener("DOMContentLoaded", function() {
         transparent: true,
         attribution: '© GéoRisques'
     });
-
+    // Ajouter une couche WMS pour les gonflement d'argile
     const clayLayer = L.tileLayer.wms('https://georisques.gouv.fr/services', {
         layers: 'ALEARG', 
+        format: 'image/png',
+        transparent: true,
+        attribution: '© GéoRisques'
+    });
+
+    // Ajouter une couche WMS pour l'activité sismique
+    const sismicLayer = L.tileLayer.wms('https://georisques.gouv.fr/services', {
+        layers: 'SIS_INTENSITE_EVT', 
+        format: 'image/png',
+        transparent: true,
+        attribution: '© GéoRisques'
+    });
+
+    
+    // Ajouter une couche WMS pour les mouvement de terrain
+    const cavityLayer = L.tileLayer.wms('https://georisques.gouv.fr/services', {
+        layers: 'PPRN_COMMUNE_MVT_APPROUV', 
+        format: 'image/png',
+        transparent: true,
+        attribution: '© GéoRisques'
+    });
+
+     // Ajouter une couche WMS pour les mouvement de terrain
+     const industryLayer = L.tileLayer.wms('https://georisques.gouv.fr/services', {
+        layers: 'PPRT_COMMUNE_RISQIND_APPROUV', 
+        format: 'image/png',
+        transparent: true,
+        attribution: '© GéoRisques'
+    });
+
+    // Ajouter une couche WMS pour les feux de forets
+    const forestFireLayer = L.tileLayer.wms('https://georisques.gouv.fr/services', {
+        layers: 'SUP_FEU', 
+        format: 'image/png',
+        transparent: true,
+        attribution: '© GéoRisques'
+    });
+
+    const submersionLayer = L.tileLayer.wms('https://georisques.gouv.fr/services', {
+        layers: 'ALEA_SYNT_03_02MOY_FXX', 
         format: 'image/png',
         transparent: true,
         attribution: '© GéoRisques'
@@ -328,7 +368,12 @@ document.addEventListener("DOMContentLoaded", function() {
     const overlayMaps = {
         "Zones Inondables": floodLayer,
         "Risques Radon": radonLayer,
-        "Gonflement argile" : clayLayer
+        "Gonflement argile" : clayLayer,
+        "activité sismique" : sismicLayer,
+        "PPR mouvement de terrain" : cavityLayer,
+        "risque industriel" : industryLayer,
+        "PPR feux de forets" : forestFireLayer,
+        "Risque submersion fréquent" : submersionLayer,
     };
 
     L.control.layers(null, overlayMaps).addTo(map);
