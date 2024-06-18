@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TerraRisk</title>
+    <link rel="stylesheet" href="CSS/style.css">
+    <link rel="stylesheet" href="CSS/formulaire.css">
+
+</head>
+<ul>
+    <li><a href="Accueil.html" target="_self" title="Accueil">Accueil</a></li>
+    <li><a href="Mesrisquesproche.html" target="_self" title="Mesrisquesproches">Mes risques proche</a></li>
+    <li><a href="monprofil.html" target="_self" title="monprofil">Mon profil</a></li>
+</ul>
+
+<body>
+    <h2>Veuillez vous inscrire</h2>
+    <form action="inscription">
+        <label for="name">Nom</label>
+        <input type="text" class="form-control" id="nom" aria-describedby="nomhelp" placeholder="Noter votre Nom">
+        <small id="nomhelp" class="form-text text-muted"></small>
+
+        <label for="name">Prenom</label>
+        <input type="text" class="form-control" id="prenom" aria-describedby="prenomhelp"
+            placeholder="Noter votre Prenom">
+        <small id="prenomhelp" class="form-text text-muted"></small> <br>
+
+        <label for="Email1">Email address</label>
+        <input type="email" class="form-control" id="Email1" aria-describedby="emailHelp"
+            placeholder="Noter votre adresse mail">
+        <small id="emailHelp" class="form-text text-muted"></small> <br>
+
+        <label for="Pays">Pays d'origine</label>
+        <input type="country" class="form-control" id="pays" aria-describedby="payshelp"
+            placeholder="Noter votre Pays D'origine">
+        <small id="payshelp" class="form-text text-muted"></small> <br>
+
+        <label for="Département">Département</label>
+        <input type="number" class="form-control" id="departement" aria-describedby="departementhelp"
+            placeholder="Noter votre Département">
+        <small id="departementhelp" class="form-text text-muted"></small> <br>
+
+
+        <label for="Numéros">Numéros de télephone</label>
+        <input type="number" class="form-control" id="numeros" aria-describedby="numeroshelp"
+            placeholder="Noter votre Numeros de télephone">
+        <small id="numeroshelp" class="form-text text-muted"></small> <br>
+
+        <label for="Mot de passe">Mot de passe</label>
+        <input type="password" class="form-control" id="password" aria-describedby="passwordhelp"
+            placeholder="Noter votre Mots de passe">
+        <small id="passwordhelp" class="form-text text-muted"></small> <br>
+
+        <label for="Mot de passe">Mot de passe</label>
+        <input type="password" class="form-control" id="password" aria-describedby="passwordhelp"
+            placeholder="Valider votre Mots de passe">
+        <small id="passwordhelp" class="form-text text-muted"></small>
+    </form>
+    <div class="form-check">
+        <input type="checkbox" class="form-check-input" id="Check1">
+        <label class="form-check-label" for="Check1">Accepter les conditions d'utilisations</label>
+      </div>
+      <button type="submit" class="btn btn-primary">Valider</button>
+    <button type="reset"  class="btn btn-primary">Effacer</button>
+</body>
+<footer>
+
+</footer>
+
+</html>
