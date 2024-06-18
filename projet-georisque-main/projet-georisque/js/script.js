@@ -242,56 +242,84 @@ async function generateReport(codeInsee, latlon, address) {
     }
 }
 
-document.getElementById('searchForm').addEventListener('submit', async function(event) {
-    event.preventDefault();
+   document.getElementById('searchForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
 
-    const address = document.getElementById('address').value;
-    if (address) {
-        const coordinates = await geocodeAddress(address);
-        if (coordinates) {
-            console.log('Coordonnées de l\'adresse:', coordinates);
+            const address = document.getElementById('address').value;
+            if (address) {
+                const coordinates = await geocodeAddress(address);
+                if (coordinates) {
+                    console.log('Coordonnées de l\'adresse:', coordinates);
 
-            const floodZones = await fetchFloodZones(coordinates.latitude, coordinates.longitude, coordinates.codeInsee);
-            const radonZones = await fetchRadonZones(coordinates.codeInsee);
-            const clayRisk = await fetchClayRisk(coordinates.latitude, coordinates.longitude);
-            const seismicZones = await fetchSeismicZones(1000, `${coordinates.longitude},${coordinates.latitude}`, coordinates.codeInsee);
+                    const floodZones = await fetchFloodZones(coordinates.latitude, coordinates.longitude, coordinates.codeInsee);
+                    const radonZones = await fetchRadonZones(coordinates.codeInsee);
+                    const clayRisk = await fetchClayRisk(coordinates.latitude, coordinates.longitude);
+                    const seismicZones = await fetchSeismicZones(1000, `${coordinates.longitude},${coordinates.latitude}`, coordinates.codeInsee);
 
-            let resultsText = `Latitude: ${coordinates.latitude}, Longitude: ${coordinates.longitude}\n`;
+                    const resultsContainer = document.getElementById('results');
+                    resultsContainer.innerHTML = '';
 
-            if (floodZones && floodZones.length > 0) {
-                resultsText += `L'adresse est en zone inondable avec les risques suivants : ${floodZones.join(', ')}.\n`;
+                    let cardTemplate = `
+                        <div class="col-md-6 mb-3">
+                            <div class="card">
+                                <div class="card-header">{title}</div>
+                                <div class="card-body">
+                                    <h5 class="card-title">{content}</h5>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    resultsContainer.innerHTML += cardTemplate
+                        .replace('{title}', 'Coordonnées de l\'adresse')
+                        .replace('{content}', `Latitude: ${coordinates.latitude}, Longitude: ${coordinates.longitude}`);
+
+                    if (floodZones && floodZones.length > 0) {
+                        resultsContainer.innerHTML += cardTemplate
+                            .replace('{title}', 'Zones Inondables')
+                            .replace('{content}', `L'adresse est en zone inondable avec les risques suivants : ${floodZones.join(', ')}.`);
+                    } else {
+                        resultsContainer.innerHTML += cardTemplate
+                            .replace('{title}', 'Zones Inondables')
+                            .replace('{content}', 'L\'adresse n\'est pas en zone inondable.');
+                    }
+
+                    if (radonZones && radonZones.length > 0) {
+                        resultsContainer.innerHTML += cardTemplate
+                            .replace('{title}', 'Risques Radon')
+                            .replace('{content}', `L'adresse est en zone à risque radon (${radonZones[0]}).`);
+                    } else {
+                        resultsContainer.innerHTML += cardTemplate
+                            .replace('{title}', 'Risques Radon')
+                            .replace('{content}', 'L\'adresse n\'est pas en zone à risque radon.');
+                    }
+
+                    if (clayRisk) {
+                        resultsContainer.innerHTML += cardTemplate
+                            .replace('{title}', 'Gonflement des Sols Argileux')
+                            .replace('{content}', `Exposition au risque de gonflement des sols argileux : ${clayRisk.exposition} (${clayRisk.codeExposition}).`);
+                    }
+
+                    if (seismicZones && seismicZones.length > 0) {
+                        resultsContainer.innerHTML += cardTemplate
+                            .replace('{title}', 'Zones Sismiques')
+                            .replace('{content}', `L'adresse est en zone sismique avec les détails suivants : ${seismicZones.map(zone => `${zone.commune} (Zone: ${zone.codeZone}, Sismicité: ${zone.sismicite})`).join(', ')}.`);
+                    } else {
+                        resultsContainer.innerHTML += cardTemplate
+                            .replace('{title}', 'Zones Sismiques')
+                            .replace('{content}', 'L\'adresse n\'est pas en zone sismique.');
+                    }
+
+                    // Générer le rapport PDF
+                    const latlon = `${coordinates.longitude},${coordinates.latitude}`;
+                    await generateReport(coordinates.codeInsee, latlon, coordinates.fullAddress);
+                } else {
+                    document.getElementById('results').innerText = 'Coordonnées non trouvées.';
+                }
             } else {
-                resultsText += `L'adresse n'est pas en zone inondable.\n`;
+                document.getElementById('results').innerText = 'Veuillez entrer une adresse.';
             }
-
-            if (radonZones && radonZones.length > 0) {
-                resultsText += `L'adresse est en zone à risque radon (${radonZones[0]}).\n`;
-            } else {
-                resultsText += `L'adresse n'est pas en zone à risque radon.\n`;
-            }
-
-            if (clayRisk) {
-                resultsText += `Exposition au risque de gonflement des sols argileux : ${clayRisk.exposition} (${clayRisk.codeExposition}).\n`;
-            }
-
-            if (seismicZones && seismicZones.length > 0) {
-                resultsText += `L'adresse est en zone sismique avec les détails suivants : ${seismicZones.map(zone => `${zone.commune} (Zone: ${zone.codeZone}, Sismicité: ${zone.sismicite})`).join(', ')}.\n`;
-            } else {
-                resultsText += `L'adresse n'est pas en zone sismique.\n`;
-            }
-
-            document.getElementById('results').innerText = resultsText;
-
-            // Générer le rapport PDF
-            const latlon = `${coordinates.longitude},${coordinates.latitude}`;
-            await generateReport(coordinates.codeInsee, latlon, coordinates.fullAddress);
-        } else {
-            document.getElementById('results').innerText = 'Coordonnées non trouvées.';
-        }
-    } else {
-        document.getElementById('results').innerText = 'Veuillez entrer une adresse.';
-    }
-});
+        });
 document.addEventListener("DOMContentLoaded", function() {
     // Initialiser la carte centrée sur la France
     const map = L.map('map').setView([46.603354, 1.888334], 6);
