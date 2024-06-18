@@ -1,25 +1,94 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TerraRisk</title>
-    <link rel="stylesheet" href="CSS/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TerraRisk</title>
+  <link rel="stylesheet" href="CSS/style.css">
+  
 </head>
 <ul>
-    <li><a href="Accueil.html" target="_self" title="Accueil">Accueil</a></li>
-    <li><a href="Mesrisquesproche.html" target="_self" title="Mesrisquesproches">Mes risques proche</a></li>
-    <li><a href="monprofil.html" target="_self" title="monprofil">Mon profil</a></li>
+  <li><a href="Accueil.html" target="_self" title="Accueil">Accueil</a></li>
+  <li><a href="Mesrisquesproche.html" target="_self" title="Mesrisquesproches">Mes risques proche</a></li>
+  <li><a href="monprofil.html" target="_self" title="monprofil">Mon profil</a></li>
 </ul>
 
 <body>
-<main>
-    <button><a href="connexion.html" target="_self" title="Connexion">Connexion</a></button>
-    <p>OU</p>
-    <button><a href="inscription.html" target="_self" title="inscription">Inscription</a></button>
-</main>
+  Veuillez vous connecter
+  <form id="loginForm">
+    <label for="loginEmail">Email:</label>
+    <input type="email" id="loginEmail" name="email" required><br><br>
+
+    <label for="loginPassword">Mot de passe:</label>
+    <input type="password" id="loginPassword" name="password" required><br><br>
+
+    <div class="form-check">
+      <input type="checkbox" class="form-check-input" id="Check1" required>
+      <label class="form-check-label" for="Check1">Accepter les conditions d'utilisations</label>
+    </div>
+    <button type="submit">Se Connecter</button>
+    <button type="button" id="resetButton">Réinitialiser</button>
+  </form>
+
+  <p id="loginErrorMessage" style="color: red;"></p>
+  <p><a href="resetmdp.html">Mot de passe oublié ?</a></p>
+  <ul>
+    <li>
+      <a href="inscription.html" target="_self" title="inscription">S'inscrire</a>
+    </li>
+  </ul>
+  
+
 </body>
-<footer>
-    
+<footer><ul>
+  <li><a href="mentionlegal.html" target="_self" title="mentionlegal">Mentions légales</a></li>
+  <li><a href="conditionutil.html" target="_self" title="conditionutil">Condition d'utilisation</a></li>
+  <li><a href="politiqueconfid.html" target="_self" title="politiqueconfid">Politique de confidentialité</a></li>
+  <li><a href="noscontact.html" target="_self" title="noscontact">Contacts</a></li>
+  <li><a href="remerciment.html" target="_self" title="remerciment">Remerciment</a></li>
+</ul>
 </footer>
+<script>
+  //verifie pour connexion automatique
+  document.addEventListener('DOMContentLoaded', function () {
+    if (localStorage.getItem('isLoggedIn') === 'true') {
+      window.location.href = "profil.html";
+    }
+  });
+  //quand appuyer sur se connecter renvoir vers Monprofil
+  document.getElementById('loginForm').addEventListener('submit', function (event) {
+    event.preventDefault();
+
+    var loginEmail = document.getElementById('loginEmail').value;
+    var loginPassword = document.getElementById('loginPassword').value;
+    var loginErrorMessage = document.getElementById('loginErrorMessage');
+    var storedEmail = localStorage.getItem('email');
+    var storedPassword = localStorage.getItem('password');
+
+
+    if (loginEmail === storedEmail && loginPassword === storedPassword) {
+      localStorage.setItem('isLoggedIn', 'true');
+      window.location.href = "profil.html";
+    } else {
+      loginErrorMessage.textContent = 'Identifiants incorrects. Veuillez réessayer.';
+    }
+  });
+  //permet de vider les champs de connexions
+  document.getElementById('resetButton').addEventListener('click', function () {
+    document.getElementById('loginForm').reset();
+    document.getElementById('loginErrorMessage').textContent = '';
+  });
+  function validateEmail(loginEmail) {
+    var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  }
+
+  function validatePassword(loginPassword) {
+    var re = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+    return re.test(password);
+  }
+
+</script>
+
 </html>
