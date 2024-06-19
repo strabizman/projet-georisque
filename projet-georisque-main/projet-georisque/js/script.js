@@ -1,10 +1,11 @@
-
 const UrlInondation = 'https://www.georisques.gouv.fr/api/v1/gaspar/azi';
 const UrlRadon = 'https://www.georisques.gouv.fr/api/v1/radon';
 const UrlClay = 'https://www.georisques.gouv.fr/api/v1/rga';
 const UrlSeismic = 'https://www.georisques.gouv.fr/api/v1/zonage_sismique';
 const UrlReport = 'https://www.georisques.gouv.fr/api//v1/rapport_pdf';
 const LocalProxy = 'http://localhost:3000/api';
+
+let map;
 
 async function geocodeAddress(address) {
     const apiUrl = `${LocalProxy}/search/?q=${encodeURIComponent(address)}&limit=1`;
@@ -25,7 +26,8 @@ async function geocodeAddress(address) {
             latitude: location[1],
             longitude: location[0],
             codeInsee: data.features[0].properties.citycode,
-            fullAddress: data.features[0].properties.label
+            fullAddress: data.features[0].properties.label,
+            coordinates: [location[1], location[0]] // Ajout des coordonnées sous forme de tableau
         };
     } catch (error) {
         console.error('Erreur lors de la récupération des coordonnées de l\'adresse :', error);
@@ -35,19 +37,15 @@ async function geocodeAddress(address) {
 
 async function fetchFloodZones(latitude, longitude) {
     const params = {
-        latlon: `${longitude},${latitude}`,
-  
-       
+        latlon: `${longitude},${latitude}`
     };
 
     const urlWithParams = buildUrl(UrlInondation, params);
-    
-    // Ajouter cette ligne pour afficher l'URL dans la console
+
     console.log('URL envoyée à l\'API pour les zones inondables:', urlWithParams);
 
     try {
         const response = await fetch(urlWithParams);
-        
         if (!response.ok) {
             throw new Error(`Erreur HTTP ! statut : ${response.status}`);
         }
@@ -142,9 +140,7 @@ async function fetchSeismicZones(rayon, latlon, codeInsee) {
         const data = await response.json();
         console.log('Données reçues des zones sismiques:', data);
 
-        // Vérification et extraction des données
         if (data.data && data.data.length > 0) {
-            // Extraire les informations de sismicité
             return data.data.map(item => ({
                 codeInsee: item.code_insee,
                 commune: item.libelle_commune,
@@ -242,87 +238,95 @@ async function generateReport(codeInsee, latlon, address) {
     }
 }
 
-   document.getElementById('searchForm').addEventListener('submit', async function(event) {
-            event.preventDefault();
+async function centerMapOnCoordinates(coordinates) {
+    map.setView(coordinates, 13); // Vous pouvez ajuster le niveau de zoom selon vos besoins
+}
 
-            const address = document.getElementById('address').value;
-            if (address) {
-                const coordinates = await geocodeAddress(address);
-                if (coordinates) {
-                    console.log('Coordonnées de l\'adresse:', coordinates);
+document.getElementById('searchForm').addEventListener('submit', async function(event) {
+    event.preventDefault();
 
-                    const floodZones = await fetchFloodZones(coordinates.latitude, coordinates.longitude, coordinates.codeInsee);
-                    const radonZones = await fetchRadonZones(coordinates.codeInsee);
-                    const clayRisk = await fetchClayRisk(coordinates.latitude, coordinates.longitude);
-                    const seismicZones = await fetchSeismicZones(1000, `${coordinates.longitude},${coordinates.latitude}`, coordinates.codeInsee);
+    const address = document.getElementById('address').value;
+    if (address) {
+        const coordinates = await geocodeAddress(address);
+        if (coordinates) {
+            console.log('Coordonnées de l\'adresse:', coordinates);
 
-                    const resultsContainer = document.getElementById('results');
-                    resultsContainer.innerHTML = '';
+            // Centre et zoom sur la carte
+            centerMapOnCoordinates(coordinates.coordinates);
 
-                    let cardTemplate = `
-                        <div class="col-md-6 mb-3">
-                            <div class="card">
-                                <div class="card-header">{title}</div>
-                                <div class="card-body">
-                                    <h5 class="card-title">{content}</h5>
-                                </div>
-                            </div>
+            const floodZones = await fetchFloodZones(coordinates.latitude, coordinates.longitude, coordinates.codeInsee);
+            const radonZones = await fetchRadonZones(coordinates.codeInsee);
+            const clayRisk = await fetchClayRisk(coordinates.latitude, coordinates.longitude);
+            const seismicZones = await fetchSeismicZones(1000, `${coordinates.longitude},${coordinates.latitude}`, coordinates.codeInsee);
+
+            const resultsContainer = document.getElementById('results');
+            resultsContainer.innerHTML = '';
+
+            let cardTemplate = `
+                <div class="col-md-6 mb-3">
+                    <div class="card">
+                        <div class="card-header">{title}</div>
+                        <div class="card-body">
+                            <h5 class="card-title">{content}</h5>
                         </div>
-                    `;
+                    </div>
+                </div>
+            `;
 
-                    resultsContainer.innerHTML += cardTemplate
-                        .replace('{title}', 'Coordonnées de l\'adresse')
-                        .replace('{content}', `Latitude: ${coordinates.latitude}, Longitude: ${coordinates.longitude}`);
+            resultsContainer.innerHTML += cardTemplate
+                .replace('{title}', 'Coordonnées de l\'adresse')
+                .replace('{content}', `Latitude: ${coordinates.latitude}, Longitude: ${coordinates.longitude}`);
 
-                    if (floodZones && floodZones.length > 0) {
-                        resultsContainer.innerHTML += cardTemplate
-                            .replace('{title}', 'Zones Inondables')
-                            .replace('{content}', `L'adresse est en zone inondable avec les risques suivants : ${floodZones.join(', ')}.`);
-                    } else {
-                        resultsContainer.innerHTML += cardTemplate
-                            .replace('{title}', 'Zones Inondables')
-                            .replace('{content}', 'L\'adresse n\'est pas en zone inondable.');
-                    }
-
-                    if (radonZones && radonZones.length > 0) {
-                        resultsContainer.innerHTML += cardTemplate
-                            .replace('{title}', 'Risques Radon')
-                            .replace('{content}', `L'adresse est en zone à risque radon (${radonZones[0]}).`);
-                    } else {
-                        resultsContainer.innerHTML += cardTemplate
-                            .replace('{title}', 'Risques Radon')
-                            .replace('{content}', 'L\'adresse n\'est pas en zone à risque radon.');
-                    }
-
-                    if (clayRisk) {
-                        resultsContainer.innerHTML += cardTemplate
-                            .replace('{title}', 'Gonflement des Sols Argileux')
-                            .replace('{content}', `Exposition au risque de gonflement des sols argileux : ${clayRisk.exposition} (${clayRisk.codeExposition}).`);
-                    }
-
-                    if (seismicZones && seismicZones.length > 0) {
-                        resultsContainer.innerHTML += cardTemplate
-                            .replace('{title}', 'Zones Sismiques')
-                            .replace('{content}', `L'adresse est en zone sismique avec les détails suivants : ${seismicZones.map(zone => `${zone.commune} (Zone: ${zone.codeZone}, Sismicité: ${zone.sismicite})`).join(', ')}.`);
-                    } else {
-                        resultsContainer.innerHTML += cardTemplate
-                            .replace('{title}', 'Zones Sismiques')
-                            .replace('{content}', 'L\'adresse n\'est pas en zone sismique.');
-                    }
-
-                    // Générer le rapport PDF
-                    const latlon = `${coordinates.longitude},${coordinates.latitude}`;
-                    await generateReport(coordinates.codeInsee, latlon, coordinates.fullAddress);
-                } else {
-                    document.getElementById('results').innerText = 'Coordonnées non trouvées.';
-                }
+            if (floodZones && floodZones.length > 0) {
+                resultsContainer.innerHTML += cardTemplate
+                    .replace('{title}', 'Zones Inondables')
+                    .replace('{content}', `L'adresse est en zone inondable avec les risques suivants : ${floodZones.join(', ')}.`);
             } else {
-                document.getElementById('results').innerText = 'Veuillez entrer une adresse.';
+                resultsContainer.innerHTML += cardTemplate
+                    .replace('{title}', 'Zones Inondables')
+                    .replace('{content}', 'L\'adresse n\'est pas en zone inondable.');
             }
-        });
+
+            if (radonZones && radonZones.length > 0) {
+                resultsContainer.innerHTML += cardTemplate
+                    .replace('{title}', 'Risques Radon')
+                    .replace('{content}', `L'adresse est en zone à risque radon (${radonZones[0]}).`);
+            } else {
+                resultsContainer.innerHTML += cardTemplate
+                    .replace('{title}', 'Risques Radon')
+                    .replace('{content}', 'L\'adresse n\'est pas en zone à risque radon.');
+            }
+
+            if (clayRisk) {
+                resultsContainer.innerHTML += cardTemplate
+                    .replace('{title}', 'Gonflement des Sols Argileux')
+                    .replace('{content}', `Exposition au risque de gonflement des sols argileux : ${clayRisk.exposition} (${clayRisk.codeExposition}).`);
+            }
+
+            if (seismicZones && seismicZones.length > 0) {
+                resultsContainer.innerHTML += cardTemplate
+                    .replace('{title}', 'Zones Sismiques')
+                    .replace('{content}', `L'adresse est en zone sismique avec les détails suivants : ${seismicZones.map(zone => `${zone.commune} (Zone: ${zone.codeZone}, Sismicité: ${zone.sismicite})`).join(', ')}.`);
+            } else {
+                resultsContainer.innerHTML += cardTemplate
+                    .replace('{title}', 'Zones Sismiques')
+                    .replace('{content}', 'L\'adresse n\'est pas en zone sismique.');
+            }
+
+            // Générer le rapport PDF
+            const latlon = `${coordinates.longitude},${coordinates.latitude}`;
+            await generateReport(coordinates.codeInsee, latlon, coordinates.fullAddress);
+        } else {
+            document.getElementById('results').innerText = 'Coordonnées non trouvées.';
+        }
+    } else {
+        document.getElementById('results').innerText = 'Veuillez entrer une adresse.';
+    }
+});
+
 document.addEventListener("DOMContentLoaded", function() {
     // Initialiser la carte centrée sur la France
-    const map = L.map('map').setView([46.603354, 1.888334], 6);
+    map = L.map('map').setView([46.603354, 1.888334], 6);
 
     // Ajouter une couche de tuiles (par exemple OpenStreetMap)
     const baseLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -344,6 +348,7 @@ document.addEventListener("DOMContentLoaded", function() {
         transparent: true,
         attribution: '© GéoRisques'
     });
+
     // Ajouter une couche WMS pour les gonflement d'argile
     const clayLayer = L.tileLayer.wms('https://georisques.gouv.fr/services', {
         layers: 'ALEARG', 
@@ -360,8 +365,7 @@ document.addEventListener("DOMContentLoaded", function() {
         attribution: '© GéoRisques'
     });
 
-    
-    // Ajouter une couche WMS pour les mouvement de terrain
+    // Ajouter une couche WMS pour les mouvements de terrain
     const cavityLayer = L.tileLayer.wms('https://georisques.gouv.fr/services', {
         layers: 'PPRN_COMMUNE_MVT_APPROUV', 
         format: 'image/png',
@@ -369,15 +373,15 @@ document.addEventListener("DOMContentLoaded", function() {
         attribution: '© GéoRisques'
     });
 
-     // Ajouter une couche WMS pour les mouvement de terrain
-     const industryLayer = L.tileLayer.wms('https://georisques.gouv.fr/services', {
+    // Ajouter une couche WMS pour les risques industriels
+    const industryLayer = L.tileLayer.wms('https://georisques.gouv.fr/services', {
         layers: 'PPRT_COMMUNE_RISQIND_APPROUV', 
         format: 'image/png',
         transparent: true,
         attribution: '© GéoRisques'
     });
 
-    // Ajouter une couche WMS pour les feux de forets
+    // Ajouter une couche WMS pour les feux de forêts
     const forestFireLayer = L.tileLayer.wms('https://georisques.gouv.fr/services', {
         layers: 'SUP_FEU', 
         format: 'image/png',
@@ -385,6 +389,7 @@ document.addEventListener("DOMContentLoaded", function() {
         attribution: '© GéoRisques'
     });
 
+    // Ajouter une couche WMS pour les risques de submersion
     const submersionLayer = L.tileLayer.wms('https://georisques.gouv.fr/services', {
         layers: 'ALEA_SYNT_03_02MOY_FXX', 
         format: 'image/png',
@@ -396,12 +401,12 @@ document.addEventListener("DOMContentLoaded", function() {
     const overlayMaps = {
         "Zones Inondables": floodLayer,
         "Risques Radon": radonLayer,
-        "Gonflement argile" : clayLayer,
-        "activité sismique" : sismicLayer,
-        "PPR mouvement de terrain" : cavityLayer,
-        "risque industriel" : industryLayer,
-        "PPR feux de forets" : forestFireLayer,
-        "Risque submersion fréquent" : submersionLayer,
+        "Gonflement argile": clayLayer,
+        "activité sismique": sismicLayer,
+        "PPR mouvement de terrain": cavityLayer,
+        "risque industriel": industryLayer,
+        "PPR feux de forêts": forestFireLayer,
+        "Risque submersion fréquent": submersionLayer,
     };
 
     L.control.layers(null, overlayMaps).addTo(map);
