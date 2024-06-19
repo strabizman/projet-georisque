@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Réinitialisation de Mot de Passe</title>
+
 </head>
 <ul>
     <li><a href="Accueil.html" target="_self" title="Accueil">Accueil</a></li>
@@ -19,24 +20,7 @@
     
     <p id="resetRequestMessage" style="color: red;"></p>
 
-    <script>
-        document.getElementById('resetRequestForm').addEventListener('submit', function (event) {
-            event.preventDefault();
 
-            var resetEmail = document.getElementById('resetEmail').value;
-            var resetRequestMessage = document.getElementById('resetRequestMessage');
-
-            
-            var storedEmail = localStorage.getItem('email');
-
-            if (resetEmail === storedEmail) {
-                
-                window.location.href = "new_password.html";
-            } else {
-                resetRequestMessage.textContent = 'Email non trouvé. Veuillez réessayer.';
-            }
-        });
-    </script>
 </body>
 <footer><ul>
     <li><a href="mentionlegal.html" target="_self" title="mentionlegal">Mentions légales</a></li>
@@ -46,4 +30,22 @@
     <li><a href="remerciment.html" target="_self" title="remerciment">Remerciment</a></li>
 </ul>
 </footer>
+<script>
+    document.getElementById('resetRequestForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        var resetEmail = document.getElementById('resetEmail').value;
+        var resetRequestMessage = document.getElementById('resetRequestMessage');
+
+        
+        var storedEmail = localStorage.getItem('email');
+
+        if (resetEmail === storedEmail) {
+            
+            window.location.href = "new_password.html";
+        } else {
+            resetRequestMessage.textContent = 'Email non trouvé. Veuillez réessayer.';
+        }
+    });
+</script>
 </html>

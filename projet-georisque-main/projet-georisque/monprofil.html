@@ -1,15 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TerraRisk</title>
   <link rel="stylesheet" href="CSS/style.css">
-  <script src="js/formulaire.js"></script>
-  <script src="js/connexions.js"></script>
+  
 </head>
-
 <ul>
   <li><a href="Accueil.html" target="_self" title="Accueil">Accueil</a></li>
   <li><a href="Mesrisquesproche.html" target="_self" title="Mesrisquesproches">Mes risques proche</a></li>
@@ -40,47 +38,7 @@
       <a href="inscription.html" target="_self" title="inscription">S'inscrire</a>
     </li>
   </ul>
-  <script>
-    //verifie pour connexion automatique
-    document.addEventListener('DOMContentLoaded', function () {
-      if (localStorage.getItem('isLoggedIn') === 'true') {
-        window.location.href = "profil.html";
-      }
-    });
-    //quand appuyer sur se connecter renvoir vers Monprofil
-    document.getElementById('loginForm').addEventListener('submit', function (event) {
-      event.preventDefault();
-
-      var loginEmail = document.getElementById('loginEmail').value;
-      var loginPassword = document.getElementById('loginPassword').value;
-      var loginErrorMessage = document.getElementById('loginErrorMessage');
-      var storedEmail = localStorage.getItem('email');
-      var storedPassword = localStorage.getItem('password');
-
-
-      if (loginEmail === storedEmail && loginPassword === storedPassword) {
-        localStorage.setItem('isLoggedIn', 'true');
-        window.location.href = "profil.html";
-      } else {
-        loginErrorMessage.textContent = 'Identifiants incorrects. Veuillez réessayer.';
-      }
-    });
-    //permet de vider les champs de connexions
-    document.getElementById('resetButton').addEventListener('click', function () {
-      document.getElementById('loginForm').reset();
-      document.getElementById('loginErrorMessage').textContent = '';
-    });
-    function validateEmail(loginEmail) {
-      var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      return re.test(email);
-    }
-
-    function validatePassword(loginPassword) {
-      var re = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
-      return re.test(password);
-    }
-
-  </script>
+  
 
 </body>
 <footer><ul>
@@ -91,6 +49,46 @@
   <li><a href="remerciment.html" target="_self" title="remerciment">Remerciment</a></li>
 </ul>
 </footer>
+<script>
+  //verifie pour connexion automatique
+  document.addEventListener('DOMContentLoaded', function () {
+    if (localStorage.getItem('isLoggedIn') === 'true') {
+      window.location.href = "profil.html";
+    }
+  });
+  //quand appuyer sur se connecter renvoir vers Monprofil
+  document.getElementById('loginForm').addEventListener('submit', function (event) {
+    event.preventDefault();
 
+    var loginEmail = document.getElementById('loginEmail').value;
+    var loginPassword = document.getElementById('loginPassword').value;
+    var loginErrorMessage = document.getElementById('loginErrorMessage');
+    var storedEmail = localStorage.getItem('email');
+    var storedPassword = localStorage.getItem('password');
+
+
+    if (loginEmail === storedEmail && loginPassword === storedPassword) {
+      localStorage.setItem('isLoggedIn', 'true');
+      window.location.href = "profil.html";
+    } else {
+      loginErrorMessage.textContent = 'Identifiants incorrects. Veuillez réessayer.';
+    }
+  });
+  //permet de vider les champs de connexions
+  document.getElementById('resetButton').addEventListener('click', function () {
+    document.getElementById('loginForm').reset();
+    document.getElementById('loginErrorMessage').textContent = '';
+  });
+  function validateEmail(loginEmail) {
+    var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  }
+
+  function validatePassword(loginPassword) {
+    var re = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+    return re.test(password);
+  }
+
+</script>
 
 </html>
