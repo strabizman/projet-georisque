@@ -1,75 +1,160 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TerraRisk</title>
-    <link rel="stylesheet" href="CSS/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TerraRisk</title>
+  <link rel="stylesheet" href="CSS/navbar.css">
+  <link rel="stylesheet" href="CSS/style.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Leckerli+One&display=swap" rel="stylesheet">
 </head>
-<ul>
-    <li><a href="Accueil.html" target="_self" title="Accueil">Accueil</a></li>
-    <li><a href="Mesrisquesproche.html" target="_self" title="Mesrisquesproches">Mes risques proche</a></li>
-    <li><a href="monprofil.html" target="_self" title="monprofil">Mon profil</a></li>
-</ul>
+
+<header>
+  <nav class="navbar navbar-expand-lg navbar">
+    <div class="container-fluid position-relative">
+      <a class="navbar-brand navbar-brand-center">TerraRisk</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link  " aria-current="page" href="Accueil.html">Accueil</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="Mesrisquesproche.html">Mes risques proches</a>
+          </li>
+        </ul>
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="monprofil.html">Connexion</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</header>
 
 <body>
-    <header>
-        <h1>TerraRisk</h1>
-    </header>
-    <section>
+  <div id="cookieConsentBanner">
+    <p>
+      En utilisant ce site, vous acceptez nos <a href="conditions.html">Conditions d'utilisation</a>,
+      <a href="mentions.html">Mentions légales</a> et notre
+      <a href="confidentialite.html">Politique de confidentialité</a>.
+    </p>
+    <button id="acceptCookieButton">J'accepte</button>
+    <button id="refuseCookieButton">Je refuse</button>
+  </div>
+
+    <main>
+      <section>
         <h2>Notre Projet</h2>
-        <main>
-            <p>
-                Bonjour, nous vous présentons TerraRisk notre projet qui a pour objectif de permettre au gens d'obtenir
-                plus facilement des informations sur différents terrains. <br>
-                Ce projet fonctionne grace à des API du gouvernement et un formulaire de recherche liées a une carte,
-                lors de la recherche et validation de la position
-                l'utilisateur pourra récupérer un rapport compler sur différents éléments telle que : <br>
-                - Zone inondable <br>
-                - Mouvement de terrain <br>
-                - Risque radon <br>
-                - Retrait/gonflement en sol argileux <br>
-                - Risque sismique <br>
-                - Risque majeur <br>
-            </p>
-        </main>
-    </section>
-    <section>
-        <main>
-            <h2>Définitions des risque recherchée</h2>
-            <p>
-                <b>Une zone inondable</b>, reprise également sous l'appellation de terrain inondable, est un lieu
-                géographique
-                délimité qui a été recouvert par les eaux lors d'une inondation.
-                Les ZI sont liées à deux catégories de phénomènes : les inondations naturelles et les inondations dues
-                aux activités humaines. <br>
-                <b>Un Mouvement de terrain ( ou glissement de terrain)</b> est un phénomène d'origine sismique,
-                géologique ou
-                géophysique
-                où une masse de terre descend sur une pente, autrement dit un plan de glissement, qui peut être plus ou
-                moins continu, et plus ou moins incurvé. <br>
-                <b>Le risque radon</b> est est un gaz radioactif ,cancérigène naturel inodore,
-                incolore et inerte, présent partout dans les sols mais plus fortement dans les sous-sols granitiques et
-                volcaniques.
-                Ce gaz s’accumule dans les espaces clos, notamment dans les bâtiments. <br>
-                <b>Le retrait/gonflement en sol argileux</b> est un phénomènequi apparait lorsque la teneur en eau
-                augmente
-                dans un sol argileux, on assiste à une augmentation du volume de ce sol, on parle alors de « gonflement
-                des argiles ».
-                Au contraire, une baisse de la teneur en eau provoquera un phénomène inverse de rétractation ou «
-                retrait des argiles ». <br>
-                <b>Le risque sismiqu</b>e désigne la combinaison entre l'aléa sismique, les biens et les populations qui y sont
-                soumises, et leur vulnérabilité face à cet aléa. <br>
-                <b>Le risque majeur</b> est la possibilité d’un évènement d’origine naturelle ou anthropique (lié à l’activité
-                humaine), dont les effets peuvent mettre en jeu un grand nombre de personnes, occasionner des dommages
-                importants et dépasser les capacités de réaction de la société.
-            </p>
-        </main>
-    </section>
+        <p>
+          Bonjour, nous vous présentons TerraRisk notre projet qui a pour objectif de permettre au gens d'obtenir
+          plus facilement des informations sur différents terrains. <br>
+          Ce projet fonctionne grâce à des API du gouvernement et un formulaire de recherche liées à une carte,
+          lors de la recherche et validation de la position
+          l'utilisateur pourra récupérer un rapport complet sur différents éléments tels que : <br>
+          - Zone inondable <br>
+          - Mouvement de terrain <br>
+          - Risque radon <br>
+          - Retrait/gonflement en sol argileux <br>
+          - Risque sismique <br>
+          - Risque majeur <br>
+        </p>
+      </section>
+      <section>
+        <h2>Définitions des risques recherchés</h2>
+        <p>
+          <strong>Une zone inondable</strong>, reprise également sous l'appellation de terrain inondable, est un lieu
+          géographique délimité qui a été recouvert par les eaux lors d'une inondation.
+          Les ZI sont liées à deux catégories de phénomènes : les inondations naturelles et les inondations dues
+          aux activités humaines. <br>
+          <strong>Un Mouvement de terrain (ou glissement de terrain)</strong> est un phénomène d'origine sismique,
+          géologique ou géophysique où une masse de terre descend sur une pente, autrement dit un plan de glissement,
+          qui peut être plus ou moins continu, et plus ou moins incurvé. <br>
+          <strong>Le risque radon</strong> est un gaz radioactif, cancérigène naturel inodore,
+          incolore et inerte, présent partout dans les sols mais plus fortement dans les sous-sols granitiques et
+          volcaniques. Ce gaz s’accumule dans les espaces clos, notamment dans les bâtiments. <br>
+          <strong>Le retrait/gonflement en sol argileux</strong> est un phénomène qui apparaît lorsque la teneur en eau
+          augmente dans un sol argileux, on assiste à une augmentation du volume de ce sol, on parle alors de « gonflement
+          des argiles ». Au contraire, une baisse de la teneur en eau provoquera un phénomène inverse de rétractation ou «
+          retrait des argiles ». <br>
+          <strong>Le risque sismique</strong> désigne la combinaison entre l'aléa sismique, les biens et les populations qui y sont
+          soumises, et leur vulnérabilité face à cet aléa. <br>
+          <strong>Le risque majeur</strong> est la possibilité d’un évènement d’origine naturelle ou anthropique (lié à l’activité
+          humaine), dont les effets peuvent mettre en jeu un grand nombre de personnes, occasionner des dommages
+          importants et dépasser les capacités de réaction de la société.
+        </p>
+      </section>
+    </main>
+  </div>
+
+  <footer class="py-3 mt-4">
+    <div class="container">
+      <ul class="list-unstyled text-center mb-0">
+        <li class="d-inline-block mx-2"><a href="mentionlegal.html" target="_self" title="mentionlegal">Mentions légales</a></li>
+        <li class="d-inline-block mx-2"><a href="conditionutil.html" target="_self" title="conditionutil">Condition d'utilisation</a></li>
+        <li class="d-inline-block mx-2"><a href="politiqueconfid.html" target="_self" title="politiqueconfid">Politique de confidentialité</a></li>
+        <li class="d-inline-block mx-2"><a href="noscontact.html" target="_self" title="noscontact">Contacts</a></li>
+        <li class="d-inline-block mx-2"><a href="remerciment.html" target="_self" title="remerciment">Remerciment</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      //verifie si la personne dit oui
+      if (!getCookie('cookieConsent')) {
+        document.getElementById('cookieConsentBanner').style.display = 'block';
+      }
+    });
+  
+    document.getElementById('acceptCookieButton').addEventListener('click', function () {
+      setCookie('cookieConsent', 'true', 365);
+      document.getElementById('cookieConsentBanner').style.display = 'none';
+    });
+  
+    document.getElementById('refuseCookieButton').addEventListener('click', function () {
+      setCookie('cookieConsent', 'false', 365);
+      document.getElementById('cookieConsentBanner').style.display = 'none';
+      alert('Vous avez refusé les cookies.C`est pas trés sympa.');
+    });
+  
+    // fait fonctionner les cookies
+    function setCookie(name, value, days) {
+      var expires = "";
+      if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+      }
+      document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    }
+  
+    function getCookie(name) {
+      var nameEQ = name + "=";
+      var ca = document.cookie.split(';');
+      for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+      }
+      return null;
+    }
+  
+    function eraseCookie(name) {
+      document.cookie = name + '=; Max-Age=-99999999;';
+    }
+  </script>  
 </body>
-<footer>
-    <li><a href="remerciment.html" target="_self" title="remerciment">Remerciment</a></li>
-</footer>
 
 </html>
