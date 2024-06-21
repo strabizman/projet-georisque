@@ -89,7 +89,15 @@ async function fetchRadonZones(codeInsee) {
         console.log('Données reçues des zones Radon:', data);
 
         if (data.data && data.data.length > 0) {
-            const radonClass = data.data.map(item => item.classe_potentiel);
+            // Mappage des classes de risque radon à leurs descriptions
+            const radonRiskDescriptions = {
+                1: 'faible',
+                2: 'moyenne',
+                3: 'élevé'
+            };
+
+            // Obtenir la description du risque radon
+            const radonClass = data.data.map(item => radonRiskDescriptions[item.classe_potentiel]);
             return radonClass;
         } else {
             return [];
@@ -250,6 +258,113 @@ async function generateReport(codeInsee, latlon, address) {
         console.error('Erreur lors de la génération du rapport PDF:', error);
     }
 }
+function groupSeismicZonesByRisk(seismicZones) {
+    const grouped = {};
+    seismicZones.forEach(zone => {
+        if (!grouped[zone.zone_sismicite]) {
+            grouped[zone.zone_sismicite] = [];
+        }
+        grouped[zone.zone_sismicite].push(zone.libelle_commune);
+    });
+    return grouped;
+}
+
+// Affichage des résultat et de la carte
+document.getElementById('searchForm').addEventListener('submit', async function(event) {
+    event.preventDefault();
+
+    const address = document.getElementById('address').value;
+    if (address) {
+        const coordinates = await geocodeAddress(address);
+        if (coordinates) {
+            console.log('Coordonnées de l\'adresse:', coordinates);
+
+            // Centrer la carte et ajouter un marqueur
+            centerMapOnCity(coordinates.latitude, coordinates.longitude);
+
+            const floodZones = await fetchFloodZones(coordinates.latitude, coordinates.longitude);
+            const radonZones = await fetchRadonZones(coordinates.codeInsee);
+            const clayRisk = await fetchClayRisk(coordinates.latitude, coordinates.longitude);
+            const seismicZones = await fetchSeismicZones(1000, `${coordinates.longitude},${coordinates.latitude}`, coordinates.codeInsee);
+
+            const resultsContainer = document.getElementById('results');
+            resultsContainer.innerHTML = '';
+            // résultat en card
+            let cardTemplate = `
+                <div class="col-md-6 mb-3">
+                    <div class="card">
+                        <div class="card-header">{title}</div>
+                        <div class="card-body">
+                            <h5 class="card-title">{content}</h5>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            if (floodZones && floodZones.length > 0) {
+                resultsContainer.innerHTML += cardTemplate
+                    .replace('{title}', 'Zones Inondables')
+                    .replace('{content}', `L'adresse est en zone inondable avec les risques suivants : ${floodZones.join(', ')}.`);
+            } else {
+                resultsContainer.innerHTML += cardTemplate
+                    .replace('{title}', 'Zones Inondables')
+                    .replace('{content}', 'L\'adresse n\'est pas en zone inondable.');
+            }
+
+            if (radonZones && radonZones.length > 0) {
+                resultsContainer.innerHTML += cardTemplate
+                    .replace('{title}', 'Risques Radon')
+                    .replace('{content}', `L'adresse est en zone à risque radon ${radonZones[0]}.`);
+            } else {
+                resultsContainer.innerHTML += cardTemplate
+                    .replace('{title}', 'Risques Radon')
+                    .replace('{content}', 'L\'adresse n\'est pas en zone à risque radon.');
+            }
+
+            if (clayRisk) {
+                resultsContainer.innerHTML += cardTemplate
+                    .replace('{title}', 'Gonflement des Sols Argileux')
+                    .replace('{content}', `Votre exposition au risque de gonflement des sols est considérer comme une ${clayRisk.exposition}.`);
+            }
+
+            if (seismicZones && seismicZones.length > 0) {
+                resultsContainer.innerHTML += cardTemplate
+                    .replace('{title}', 'Zones Sismiques')
+                    .replace('{content}', `L'adresse est en zone sismique avec un risque ${seismicZones.map(zone => ` Sismicité: ${zone.sismicite}`).join(', ')}.`);
+            } else {
+                resultsContainer.innerHTML += cardTemplate
+                    .replace('{title}', 'Zones Sismiques')
+                    .replace('{content}', 'L\'adresse n\'est pas en zone sismique.');
+            }
+
+            // Rendre le bouton de téléchargement visible
+            const downloadButton = document.getElementById('downloadReportButton');
+            downloadButton.style.display = 'block';
+
+            // bouton de dl du pdf
+            downloadButton.addEventListener('click', async function() {
+                const latlon = `${coordinates.longitude},${coordinates.latitude}`;
+                await generateReport(coordinates.codeInsee, latlon, coordinates.fullAddress);
+            });
+        } else {
+            document.getElementById('results').innerText = 'Coordonnées non trouvées.';
+        }
+    } else {
+        document.getElementById('results').innerText = 'Veuillez entrer une adresse.';
+    }
+});
+
+function centerMapOnCity(latitude, longitude) {
+    map.setView([latitude, longitude], 12); // Ajustez le niveau de zoom pour centrer sur la ville
+
+    // Ajouter un marqueur sur la carte à l'adresse recherchée
+    if (marker) {
+        map.removeLayer(marker);
+    }
+    
+}
+let map;
+let marker;
 
 document.addEventListener("DOMContentLoaded", function() {
     // Initialiser la carte centrée sur la France
@@ -335,7 +450,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     let selectedLayer = null; // Variable pour suivre la couche sélectionnée
 
-    // Ajouter des écouteurs d'événements aux cases à cocher
+    // Fonction qui surveille les checkboxs pour qu'une seule couche soit afficher à la fois par l'utilisateur
     document.addEventListener('change', function(event) {
         if (event.target.type === 'checkbox') {
             const checkbox = event.target;
@@ -368,9 +483,9 @@ document.addEventListener("DOMContentLoaded", function() {
             mapTitle.innerText = 'Carte des risques';
         }
     }
-
+     // permet de ne cocher qu'une couche à la fois pour éviter les superpositions
     function uncheckOtherCheckboxes(selectedLayerName) {
-        // Obtenir tous les éléments de contrôle de couches
+        
         const overlays = document.querySelectorAll('.leaflet-control-layers-overlays input[type="checkbox"]');
         overlays.forEach(checkbox => {
             const label = checkbox.nextSibling.textContent.trim();
@@ -383,7 +498,6 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 window.onload = setupAutocomplete;
-
 
 
 
