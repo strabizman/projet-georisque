@@ -1,0 +1,58 @@
+/* inscription.css */
+
+/* Styles spécifiques pour le formulaire d'inscription */
+
+.container {
+    max-width: 500px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.custom-title {
+    font-family: 'Leckerli One', cursive;
+    font-size: 2em;
+    margin-bottom: 20px;
+    text-align: start;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-control {
+    padding: 10px;
+    font-size: 1em;
+    border-radius: 4px;
+}
+
+.form-check {
+    margin-bottom: 20px;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #004085;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+}
+
+#errorMessage {
+    color: red;
+    font-size: 0.9em;
+}

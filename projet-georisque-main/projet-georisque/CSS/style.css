@@ -8,6 +8,10 @@
 header{
   background-color: #a47c5f;
 }
+h2{
+  font-family: 'Leckerli One', cursive;
+  color: #000000;
+}
 body {
   margin: 0;
   padding: 0;
@@ -30,7 +34,7 @@ section {
 }
 
 section h2 {
-  color: var(--header-footer-bg-color); 
+
   text-align: start;
   margin-top: 0;
 }
@@ -43,7 +47,6 @@ main p {
 
 footer {
   background-color: var(--footer-bg-color);
-  color: #fff;
   padding: 1em 0;
   text-align: center;
 }
