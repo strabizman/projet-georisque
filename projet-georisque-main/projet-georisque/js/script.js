@@ -450,7 +450,7 @@ document.addEventListener("DOMContentLoaded", function() {
         "PPR mouvement de terrain": cavityLayer,
         "risque industriel": industryLayer,
         "PPR feux de forets": forestFireLayer,
-        "Risque submersion fréquent": submersionLayer,
+        
     };
 
     const controlLayers = L.control.layers(null, overlayMaps).addTo(map);
