@@ -1,51 +1,97 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-    <title>Réinitialisation de Mot de Passe</title>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Réinitialisation de Mot de Passe - TerraRisk</title>
+    <link rel="stylesheet" href="CSS/navbar.css">
+    <link rel="stylesheet" href="CSS/style.css">
+    <link rel="stylesheet" href="CSS/reset_password.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Leckerli+One&display=swap" rel="stylesheet">
 </head>
-<ul>
-    <li><a href="Accueil.html" target="_self" title="Accueil">Accueil</a></li>
-    <li><a href="Mesrisquesproche.html" target="_self" title="Mesrisquesproches">Mes risques proche</a></li>
-    <li><a href="monprofil.html" target="_self" title="monprofil">Mon profil</a></li>
-  </ul>
-  
+
+<header>
+    <nav class="navbar navbar-expand-lg navbar">
+      <div class="container-fluid position-relative">
+        <a class="navbar-brand navbar-brand-center">TerraRisk</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link  " aria-current="page" href="Accueil.html">Accueil</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="Mesrisquesproche.html">Mes risques proches</a>
+            </li>
+          </ul>
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="monprofil.html">Connexion</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
 <body>
-    <form id="resetRequestForm">
-        <label for="resetEmail">Email:</label>
-        <input type="email" id="resetEmail" name="email" required><br><br>
-        
-        <button type="submit">Demander la Réinitialisation</button>
-    </form>
+    <main>
+    <div class="container mt-5">
+        <h1 class="text-left mb-4">Réinitialisation du Mot de Passe</h1>
+        <form id="resetRequestForm" class="mt-4">
+            <div class="form-group">
+                <label for="resetEmail">Adresse e-mail</label>
+                <input type="email" class="form-control" id="resetEmail" placeholder="Entrez votre adresse e-mail" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block mt-3">Demander la Réinitialisation</button>
+            <p id="resetRequestMessage" style="color: red;"></p>
+        </form>
     
-    <p id="resetRequestMessage" style="color: red;"></p>
-
-
+    </div>
+    
+</main>
 </body>
-<footer><ul>
-    <li><a href="mentionlegal.html" target="_self" title="mentionlegal">Mentions légales</a></li>
-    <li><a href="conditionutil.html" target="_self" title="conditionutil">Condition d'utilisation</a></li>
-    <li><a href="politiqueconfid.html" target="_self" title="politiqueconfid">Politique de confidentialité</a></li>
-    <li><a href="noscontact.html" target="_self" title="noscontact">Contacts</a></li>
-    <li><a href="remerciment.html" target="_self" title="remerciment">Remerciment</a></li>
-</ul>
-</footer>
-<script>
-    document.getElementById('resetRequestForm').addEventListener('submit', function (event) {
-        event.preventDefault();
 
-        var resetEmail = document.getElementById('resetEmail').value;
-        var resetRequestMessage = document.getElementById('resetRequestMessage');
+    <footer>
+        <div>
+            <ul class="list-inline">
+                <li class="list-inline-item"><a href="mentionlegal.html" target="_self" title="mentionlegal">Mentions légales</a></li>
+                <li class="list-inline-item"><a href="conditionutil.html" target="_self" title="conditionutil">Condition d'utilisation</a></li>
+                <li class="list-inline-item"><a href="politiqueconfid.html" target="_self" title="politiqueconfid">Politique de confidentialité</a></li>
+                <li class="list-inline-item"><a href="noscontact.html" target="_self" title="noscontact">Contacts</a></li>
+                <li class="list-inline-item"><a href="remerciment.html" target="_self" title="remerciment">Remerciment</a></li>
+            </ul>
+        </div>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"></script>
+    <script>
+        document.getElementById('resetRequestForm').addEventListener('submit', function (event) {
+            event.preventDefault();
 
-        
-        var storedEmail = localStorage.getItem('email');
+            var resetEmail = document.getElementById('resetEmail').value;
+            var resetRequestMessage = document.getElementById('resetRequestMessage');
 
-        if (resetEmail === storedEmail) {
-            
-            window.location.href = "new_password.html";
-        } else {
-            resetRequestMessage.textContent = 'Email non trouvé. Veuillez réessayer.';
-        }
-    });
-</script>
+            var storedEmail = localStorage.getItem('email');
+
+            if (resetEmail === storedEmail) {
+                window.location.href = "new_password.html";
+            } else {
+                resetRequestMessage.textContent = 'Email non trouvé. Veuillez réessayer.';
+            }
+        });
+    </script>
+
 </html>

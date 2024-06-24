@@ -17,7 +17,7 @@
   font-family: "Leckerli One";
   font-size: 2em;
   animation: wizz 0.5s infinite;
-  color: white; /* Assurez-vous que la couleur est bien blanche */
+  color: white; 
   }
   
   .leckerli-one-regular {
@@ -32,19 +32,17 @@
   font-size: 1em;
   }
   
-  /* Ajout du style pour l'icône du navbar-toggler en mode mobile /
-  .navbar-toggler {
-  border-color: rgb(255, 255, 255); / Optionnel : pour changer la couleur de la bordure du toggler */
+  
   
   .navbar-toggler-icon {
   background-image: url("data/svg+xml,%3csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3e%3cpath stroke='rgba%28255, 255, 255, 1%29' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
   }
   
   .navbar {
-  background-color: #a47c5f; /* Changer la couleur de fond de la navbar */
+  background-color: #a47c5f; 
   }
   
-  /* Répéter la définition pour s'assurer qu'elle n'est pas remplacée */
+
   .navbar-brand {
   color: white !important;
   }
@@ -64,19 +62,19 @@
   }
   }
   .navbar .nav-link {
-    color: #ffffff; /* Met les liens de la navbar en blanc */
+    color: #ffffff; 
 }
 
 .navbar .navbar-toggler {
-    border-color: #ffffff; /* Met la bordure du navbar-toggler en blanc */
+    border-color: #ffffff; 
 }
 
 .navbar .navbar-toggler-icon {
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
-    /* Change l'icône du navbar-toggler en blanc */
+
 }
 
-/* Assurez-vous que le navbar a une couleur de fond différente pour que le blanc soit visible */
+
 .navbar {
-    background-color: #a47c5f; /* Mettre la couleur de fond de la navbar */
+    background-color: #a47c5f; 
 }
