@@ -110,11 +110,8 @@ async function fetchRadonZones(codeInsee) {
 
 // Argile
 
-async function fetchClayRisk(latitude, longitude) {
-    const params = {
-        latlon: `${longitude},${latitude}`
-    };
-
+async function fetchClayRisk(lat, lon) {
+    const params = { lat: lat, lon: lon };
     const urlWithParams = buildUrl(UrlClay, params);
 
     try {
@@ -123,10 +120,20 @@ async function fetchClayRisk(latitude, longitude) {
             throw new Error(`Erreur HTTP ! statut : ${response.status}`);
         }
 
-        const data = await response.json();
-        console.log('Données reçues des risques de gonflement des sols argileux:', data);
+        const text = await response.text();
+        if (!text) {
+            throw new Error('Réponse vide de l\'API pour les risques argileux.');
+        }
 
-        return data;
+        const data = JSON.parse(text);
+        console.log('Données reçues des risques argileux:', data);
+
+        // Vérification et extraction des données
+        if (data.data && data.data.length > 0) {
+            return data.data[0];
+        } else {
+            return null;
+        }
     } catch (error) {
         console.error('Erreur lors de la récupération des données de gonflement des sols argileux:', error);
         return null;
@@ -159,12 +166,11 @@ async function fetchSeismicZones(rayon, latlon, codeInsee) {
 
         // Vérification et extraction des données
         if (data.data && data.data.length > 0) {
-            // Extraire les informations de sismicité
-            return data.data.map(item => ({
-                codeInsee: item.code_insee,
-                commune: item.libelle_commune,
-                codeZone: item.code_zone,
-                sismicite: item.zone_sismicite
+            // Extraire les informations de sismicité et éviter les doublons
+            const uniqueSismicities = new Set(data.data.map(item => item.zone_sismicite));
+            return [...uniqueSismicities].map(sismicite => ({
+                codeInsee: codeInsee,
+                sismicite: sismicite
             }));
         } else {
             return [];
@@ -324,13 +330,14 @@ document.getElementById('searchForm').addEventListener('submit', async function(
             if (clayRisk) {
                 resultsContainer.innerHTML += cardTemplate
                     .replace('{title}', 'Gonflement des Sols Argileux')
-                    .replace('{content}', `Votre exposition au risque de gonflement des sols est considérer comme une ${clayRisk.exposition}.`);
+                    .replace('{content}', `Votre exposition au risque de gonflement des sols est considéré comme une ${clayRisk.exposition}.`);
             }
 
             if (seismicZones && seismicZones.length > 0) {
+                const uniqueSeismicities = [...new Set(seismicZones.map(zone => `Sismicité: ${zone.sismicite}`))];
                 resultsContainer.innerHTML += cardTemplate
                     .replace('{title}', 'Zones Sismiques')
-                    .replace('{content}', `L'adresse est en zone sismique avec un risque ${seismicZones.map(zone => ` Sismicité: ${zone.sismicite}`).join(', ')}.`);
+                    .replace('{content}', `L'adresse est en zone sismique avec un risque ${uniqueSeismicities.join(', ')}.`);
             } else {
                 resultsContainer.innerHTML += cardTemplate
                     .replace('{title}', 'Zones Sismiques')
@@ -352,7 +359,7 @@ document.getElementById('searchForm').addEventListener('submit', async function(
     } else {
         document.getElementById('results').innerText = 'Veuillez entrer une adresse.';
     }
-});
+})
 
 function centerMapOnCity(latitude, longitude) {
     map.setView([latitude, longitude], 12); // Ajustez le niveau de zoom pour centrer sur la ville
