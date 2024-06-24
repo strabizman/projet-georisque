@@ -69,4 +69,5 @@ function loadProfileData() {
             }
         }
     });
+    document.getElementById('logoutButton').addEventListener('click', logout);
 }
