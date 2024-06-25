@@ -49,6 +49,19 @@
     </nav>
   </header>
 <body>
+  <style>.card-risk-high {
+    border: 2px solid red;
+    background-color: #ffcccc;
+}
+.card-risk-moderate {
+    border: 2px solid orange;
+    background-color: #ffebcc;
+}
+.card-risk-low {
+    border: 2px solid green;
+    background-color: #ccffcc;
+}
+  </style>
     <div class="container mt-5">
         <h1 class="text-center">Bienvenue dans l'espace de recherche</h1>
         <form id="searchForm" class="mb-4">
@@ -58,6 +71,7 @@
             <input type="submit" value="Rechercher" class="btn btn-primary mt-3">
         </form>
         <div id="results" class="container"></div>
+        <button id="downloadReportButton" class="btn btn-success" style="display: none;">Télécharger le rapport PDF</button>
         <h2 class="text-center">Consulter les différents risques à l'échelle nationale</h2>
         <div id="map"></div>
     </div>

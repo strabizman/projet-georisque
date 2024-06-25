@@ -1,8 +1,8 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var dropdownButtons = document.querySelectorAll('.dropdown-button');
 
-    dropdownButtons.forEach(function(button) {
-        button.addEventListener('click', function() {
+    dropdownButtons.forEach(function (button) {
+        button.addEventListener('click', function () {
             var content = this.nextElementSibling;
             content.style.display = (content.style.display === 'block') ? 'none' : 'block';
         });
@@ -16,7 +16,7 @@ function editInfo(field) {
     var label = document.getElementById('edit-label');
     var input = document.getElementById('edit-input');
 
-    switch(field) {
+    switch (field) {
         case 'email':
             label.textContent = 'Nouvel Email:';
             input.type = 'email';
@@ -40,7 +40,7 @@ function editInfo(field) {
     }
     form.style.display = 'block';
 
-    form.onsubmit = function(event) {
+    form.onsubmit = function (event) {
         event.preventDefault();
         saveProfileData(field, input.value);
         form.style.display = 'none';
@@ -48,9 +48,6 @@ function editInfo(field) {
         loadProfileData();  // Recharger les données pour afficher les changements
     };
 }
-
-
-
 function saveProfileData(field, value) {
     localStorage.setItem(field, value);
     alert(field + ' mis à jour avec succès!');
@@ -58,7 +55,7 @@ function saveProfileData(field, value) {
 
 function loadProfileData() {
     var fields = ['email', 'nom', 'prenom', 'pays', 'departement'];
-    fields.forEach(function(field) {
+    fields.forEach(function (field) {
         var value = localStorage.getItem(field);
         if (value) {
             var displayField = document.getElementById('profile-' + field);
@@ -72,4 +69,5 @@ function loadProfileData() {
             }
         }
     });
+    document.getElementById('logoutButton').addEventListener('click', logout);
 }
