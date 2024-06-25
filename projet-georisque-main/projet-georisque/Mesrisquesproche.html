@@ -16,11 +16,10 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Leckerli+One&display=swap" rel="stylesheet">
-  
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Leckerli+One&display=swap" rel="stylesheet">
     <script src="./js/script.js" defer></script>
 </head>
 <header>
@@ -33,7 +32,7 @@
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
           <ul class="navbar-nav me-auto">
             <li class="nav-item">
-              <a class="nav-link  " aria-current="page" href="Accueil.html">Accueil</a>
+              <a class="nav-link" aria-current="page" href="Accueil.html">Accueil</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="Mesrisquesproche.html">Mes risques proches</a>
@@ -47,42 +46,44 @@
         </div>
       </div>
     </nav>
-  </header>
+</header>
 <body>
-  <style>.card-risk-high {
-    border: 2px solid red;
-    background-color: #ffcccc;
-}
-.card-risk-moderate {
-    border: 2px solid orange;
-    background-color: #ffebcc;
-}
-.card-risk-low {
-    border: 2px solid green;
-    background-color: #ccffcc;
-}
+  <style>
+    .card-risk-high {
+        border: 2px solid red;
+        background-color: #ffcccc;
+    }
+    .card-risk-moderate {
+        border: 2px solid orange;
+        background-color: #ffebcc;
+    }
+    .card-risk-low {
+        border: 2px solid green;
+        background-color: #ccffcc;
+    }
   </style>
-    <div class="container mt-5">
-        <h1 class="text-center">Bienvenue dans l'espace de recherche</h1>
-        <form id="searchForm" class="mb-4">
-            <label for="address">Rechercher une adresse exacte</label>
-            <input type="text" id="address" name="address" class="form-control" placeholder="Entrez votre adresse" required list="autocomplete-dropdown">
-            <datalist id="autocomplete-dropdown"></datalist>
-            <input type="submit" value="Rechercher" class="btn btn-primary mt-3">
-        </form>
-        <div id="results" class="container"></div>
-        <button id="downloadReportButton" class="btn btn-success" style="display: none;">Télécharger le rapport PDF</button>
-        <h2 class="text-center">Consulter les différents risques à l'échelle nationale</h2>
-        <div id="map"></div>
-    </div>
+  <div class="container mt-5">
+    <h1 class="text-center">Bienvenue dans l'espace de recherche</h1>
+    <form id="searchForm" class="mb-4">
+      <label for="address">Rechercher une adresse exacte</label>
+      <input type="text" id="address" name="address" class="form-control" placeholder="Entrez votre adresse" required list="autocomplete-dropdown">
+      <datalist id="autocomplete-dropdown"></datalist>
+      <input type="submit" value="Rechercher" class="btn btn-primary mt-3">
+    </form>
+    <div id="results" class="container"></div>
+    <button id="downloadReportButton" class="btn btn-success" style="display: none;">Télécharger le rapport PDF</button>
+    <h2 class="text-center">Consulter les différents risques à l'échelle nationale</h2>
+    <div id="map" style="height: 500px;"></div>
+  </div>
 </body>
-<footer><ul>
+<footer>
+  <ul>
     <li><a href="mentionlegal.html" target="_self" title="mentionlegal">Mentions légales</a></li>
     <li><a href="conditionutil.html" target="_self" title="conditionutil">Condition d'utilisation</a></li>
     <li><a href="politiqueconfid.html" target="_self" title="politiqueconfid">Politique de confidentialité</a></li>
     <li><a href="noscontact.html" target="_self" title="noscontact">Contacts</a></li>
     <li><a href="remerciment.html" target="_self" title="remerciment">Remerciment</a></li>
-</ul>
+  </ul>
 </footer>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
