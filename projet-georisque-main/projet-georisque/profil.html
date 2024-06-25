@@ -12,6 +12,9 @@
     <li><a href="Accueil.html" target="_self" title="Accueil">Accueil</a></li>
     <li><a href="Mesrisquesproche.html" target="_self" title="Mesrisquesproches">Mes risques proche</a></li>
     <li><a href="monprofil.html" target="_self" title="monprofil">Mon profil</a></li>
+    <li class="nav-item">
+        <a class="nav-link" href="#" id="logoutButton">Déconnexion</a>
+    </li>
 </ul>
 
 <body>
@@ -60,4 +63,14 @@
 </ul>
 </footer>
 <script src="js/bouton.js"></script>
+<script>      
+  // Fonction de déconnexion
+    function logout() {
+        localStorage.removeItem('isLoggedIn');
+        window.location.href = "monprofil.html";
+    }
+
+    // Associer la fonction de déconnexion au bouton de déconnexion
+    document.getElementById('logoutButton').addEventListener('click', logout);
+</script>
 </html>
