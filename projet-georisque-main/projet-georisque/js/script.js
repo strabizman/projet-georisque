@@ -108,34 +108,44 @@ async function fetchRadonZones(codeInsee) {
     }
 }
 
+function isValidCoordinates(coordinates) {
+    const regex = /^-?\d+(\.\d+)?,-?\d+(\.\d+)?$/;
+    if (!regex.test(coordinates)) {
+        return false;
+    }
+    
+    const [longitude, latitude] = coordinates.split(',').map(Number);
+    
+    if (longitude < -180 || longitude > 180 || latitude < -90 || latitude > 90) {
+        return false;
+    }
+    
+    return true;
+}
+
 // Argile
 
-async function fetchClayRisk(lat, lon) {
-    const params = { lat: lat, lon: lon };
-    const urlWithParams = buildUrl(UrlClay, params);
+async function fetchClayRisk(latitude, longitude) {
+    const coordinates = `${longitude},${latitude}`;
+    if (!isValidCoordinates(coordinates)) {
+        console.error('Les coordonnées fournies ne sont pas au format correct ou sont en dehors des limites valides.');
+        return null;
+    }
+
+    const url = `${UrlClay}?latlon=${coordinates}`;
 
     try {
-        const response = await fetch(urlWithParams);
+        const response = await fetch(url);
+
         if (!response.ok) {
-            throw new Error(`Erreur HTTP ! statut : ${response.status}`);
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const text = await response.text();
-        if (!text) {
-            throw new Error('Réponse vide de l\'API pour les risques argileux.');
-        }
-
-        const data = JSON.parse(text);
-        console.log('Données reçues des risques argileux:', data);
-
-        // Vérification et extraction des données
-        if (data.data && data.data.length > 0) {
-            return data.data[0];
-        } else {
-            return null;
-        }
+        const data = await response.json();
+        console.log('Clay risk data:', data);
+        return data;
     } catch (error) {
-        console.error('Erreur lors de la récupération des données de gonflement des sols argileux:', error);
+        console.error('Error fetching clay risk data:', error);
         return null;
     }
 }
@@ -177,6 +187,73 @@ async function fetchSeismicZones(rayon, latlon, codeInsee) {
         }
     } catch (error) {
         console.error('Erreur lors de la récupération des données des zones sismiques:', error);
+        return null;
+    }
+}
+
+// Risque Majeur
+async function fetchMajorRisks(rayon, latlon, codeInsee) {
+    const params = {};
+    if (rayon && latlon) {
+        params.rayon = rayon;
+        params.latlon = latlon;
+    } else if (codeInsee) {
+        params.code_insee = codeInsee;
+    } else {
+        throw new Error('Paramètres manquants pour la recherche des risques majeurs.');
+    }
+
+    const urlWithParams = buildUrl('https://www.georisques.gouv.fr/api/v1/gaspar/dicrim', params);
+
+    try {
+        const response = await fetch(urlWithParams);
+        if (!response.ok) {
+            throw new Error(`Erreur HTTP ! statut : ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Données reçues des risques majeurs:', data);
+
+        if (data.data && data.data.length > 0) {
+            return data.data;
+        } else {
+            return [];
+        }
+    } catch (error) {
+        console.error('Erreur lors de la récupération des risques majeurs:', error);
+        return null;
+    }
+}
+
+async function fetchLandslideRisk(rayon, latlon, codeInsee) {
+    const params = {};
+    if (rayon && latlon) {
+        params.rayon = rayon;
+        params.latlon = latlon;
+    } else if (codeInsee) {
+        params.code_insee = codeInsee;
+    } else {
+        throw new Error('Paramètres manquants pour la recherche des risques de mouvement de terrain.');
+    }
+
+    const urlWithParams = buildUrl('https://www.georisques.gouv.fr/api/v1/mvt', params);
+
+    try {
+        const response = await fetch(urlWithParams);
+        if (!response.ok) {
+            throw new Error(`Erreur HTTP ! statut : ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Données reçues des risques de mouvement de terrain:', data);
+
+        if (data.data && data.data.length > 0) {
+            return data.data;
+        } else {
+            return [];
+        }
+    } catch (error) {
+        console.error('Erreur lors de la récupération des risques de mouvement de terrain:', error);
         return null;
     }
 }
@@ -285,20 +362,21 @@ document.getElementById('searchForm').addEventListener('submit', async function(
         if (coordinates) {
             console.log('Coordonnées de l\'adresse:', coordinates);
 
-            // Centrer la carte et ajouter un marqueur
             centerMapOnCity(coordinates.latitude, coordinates.longitude);
 
             const floodZones = await fetchFloodZones(coordinates.latitude, coordinates.longitude);
             const radonZones = await fetchRadonZones(coordinates.codeInsee);
             const clayRisk = await fetchClayRisk(coordinates.latitude, coordinates.longitude);
             const seismicZones = await fetchSeismicZones(1000, `${coordinates.longitude},${coordinates.latitude}`, coordinates.codeInsee);
+            const majorRisks = await fetchMajorRisks(1000, `${coordinates.longitude},${coordinates.latitude}`, coordinates.codeInsee);
+            const landslideRisks = await fetchLandslideRisk(1000, `${coordinates.longitude},${coordinates.latitude}`, coordinates.codeInsee);
 
             const resultsContainer = document.getElementById('results');
             resultsContainer.innerHTML = '';
-            // résultat en card
+
             let cardTemplate = `
                 <div class="col-md-6 mb-3">
-                    <div class="card">
+                    <div class="card {cardClass}">
                         <div class="card-header">{title}</div>
                         <div class="card-body">
                             <h5 class="card-title">{content}</h5>
@@ -307,48 +385,71 @@ document.getElementById('searchForm').addEventListener('submit', async function(
                 </div>
             `;
 
-            if (floodZones && floodZones.length > 0) {
-                resultsContainer.innerHTML += cardTemplate
-                    .replace('{title}', 'Zones Inondables')
-                    .replace('{content}', `L'adresse est en zone inondable avec les risques suivants : ${floodZones.join(', ')}.`);
-            } else {
-                resultsContainer.innerHTML += cardTemplate
-                    .replace('{title}', 'Zones Inondables')
-                    .replace('{content}', 'L\'adresse n\'est pas en zone inondable.');
+            function getCardClass(riskLevel) {
+                if (riskLevel === 'high') {
+                    return 'card-risk-high';
+                } else if (riskLevel === 'moderate') {
+                    return 'card-risk-moderate';
+                } else {
+                    return 'card-risk-low';
+                }
             }
 
-            if (radonZones && radonZones.length > 0) {
-                resultsContainer.innerHTML += cardTemplate
-                    .replace('{title}', 'Risques Radon')
-                    .replace('{content}', `L'adresse est en zone à risque radon ${radonZones[0]}.`);
-            } else {
-                resultsContainer.innerHTML += cardTemplate
-                    .replace('{title}', 'Risques Radon')
-                    .replace('{content}', 'L\'adresse n\'est pas en zone à risque radon.');
+            // Arrays to store cards based on risk level
+            let highRiskCards = [];
+            let moderateRiskCards = [];
+            let lowRiskCards = [];
+
+            // Helper function to create and store cards
+            function createCard(title, content, riskLevel) {
+                const cardHtml = cardTemplate
+                    .replace('{cardClass}', getCardClass(riskLevel))
+                    .replace('{title}', title)
+                    .replace('{content}', content);
+
+                if (riskLevel === 'high') {
+                    highRiskCards.push(cardHtml);
+                } else if (riskLevel === 'moderate') {
+                    moderateRiskCards.push(cardHtml);
+                } else {
+                    lowRiskCards.push(cardHtml);
+                }
             }
 
-            if (clayRisk) {
-                resultsContainer.innerHTML += cardTemplate
-                    .replace('{title}', 'Gonflement des Sols Argileux')
-                    .replace('{content}', `Votre exposition au risque de gonflement des sols est considéré comme une ${clayRisk.exposition}.`);
-            }
+            // Zones Inondables
+            const floodRiskLevel = floodZones && floodZones.length > 0 ? 'high' : 'low';
+            createCard('Zones Inondables', floodRiskLevel === 'high' ? `L'adresse est en zone inondable.` : `L'adresse n'est pas en zone inondable.`, floodRiskLevel);
 
-            if (seismicZones && seismicZones.length > 0) {
-                const uniqueSeismicities = [...new Set(seismicZones.map(zone => `Sismicité: ${zone.sismicite}`))];
-                resultsContainer.innerHTML += cardTemplate
-                    .replace('{title}', 'Zones Sismiques')
-                    .replace('{content}', `L'adresse est en zone sismique avec un risque ${uniqueSeismicities.join(', ')}.`);
-            } else {
-                resultsContainer.innerHTML += cardTemplate
-                    .replace('{title}', 'Zones Sismiques')
-                    .replace('{content}', 'L\'adresse n\'est pas en zone sismique.');
-            }
+            // Risques Radon
+            const radonRiskLevel = radonZones && radonZones.length > 0 ? (radonZones.includes('élevé') ? 'high' : 'moderate') : 'low';
+            createCard('Risques Radon', radonRiskLevel === 'high' ? `L'adresse est en zone à risque radon élevé.` : (radonRiskLevel === 'moderate' ? `L'adresse est en zone à risque radon modéré.` : `L'adresse n'est pas en zone à risque radon.`), radonRiskLevel);
 
-            // Rendre le bouton de téléchargement visible
+            // Gonflement des Sols Argileux
+            const clayRiskLevel = clayRisk && clayRisk.exposition ? 
+                (clayRisk.exposition.includes('élevée') ? 'high' : 
+                 (clayRisk.exposition.includes('moyenne') || clayRisk.exposition.includes('modérée') ? 'moderate' : 'low')) : 'low';
+            createCard('Gonflement des Sols Argileux', clayRisk ? `Votre exposition au risque de gonflement des sols est considérée comme ${clayRisk.exposition}.` : `Pas de risque de gonflement des sols.`, clayRiskLevel);
+
+            // Zones Sismiques
+            const seismicRiskLevel = seismicZones && seismicZones.length > 0 ? (seismicZones.some(zone => zone.sismicite === '4' || zone.sismicite === '5') ? 'high' : 'moderate') : 'low';
+            createCard('Zones Sismiques', seismicRiskLevel === 'high' ? `L'adresse est en zone sismique avec un risque élevé.` : (seismicRiskLevel === 'moderate' ? `L'adresse est en zone sismique avec un risque modéré.` : `L'adresse n'est pas en zone sismique.`), seismicRiskLevel);
+
+            // Risques Majeurs
+            const majorRiskLevel = majorRisks && majorRisks.length > 0 ? 'high' : 'low';
+            createCard('Risques Majeurs', majorRiskLevel === 'high' ? majorRisks.map(risk => `Risque majeur publié en ${risk.annee_publication} pour la commune ${risk.libelle_commune} renseigner vous en mairie pour plus d'information.`).join('<br>') : `Aucun risque majeur trouvé pour cette adresse.`, majorRiskLevel);
+
+            // Risques de mouvement de terrain
+            const landslideRiskLevel = landslideRisks && landslideRisks.length > 0 ? 'high' : 'low';
+            createCard('Risques de mouvement de terrain', landslideRiskLevel === 'high' ? landslideRisks.map(risk => `Type: ${risk.type}, Lieu: ${risk.lieu}, Date: ${risk.date_debut}`).join('<br>') : `Aucun risque de mouvement de terrain trouvé pour cette adresse.`, landslideRiskLevel);
+
+            // Append cards to results container in the desired order
+            resultsContainer.innerHTML += highRiskCards.join('');
+            resultsContainer.innerHTML += moderateRiskCards.join('');
+            resultsContainer.innerHTML += lowRiskCards.join('');
+
             const downloadButton = document.getElementById('downloadReportButton');
             downloadButton.style.display = 'block';
 
-            // bouton de dl du pdf
             downloadButton.addEventListener('click', async function() {
                 const latlon = `${coordinates.longitude},${coordinates.latitude}`;
                 await generateReport(coordinates.codeInsee, latlon, coordinates.fullAddress);
@@ -359,7 +460,7 @@ document.getElementById('searchForm').addEventListener('submit', async function(
     } else {
         document.getElementById('results').innerText = 'Veuillez entrer une adresse.';
     }
-})
+});
 
 function centerMapOnCity(latitude, longitude) {
     map.setView([latitude, longitude], 12); // Ajustez le niveau de zoom pour centrer sur la ville
@@ -440,6 +541,7 @@ document.addEventListener("DOMContentLoaded", function() {
         transparent: true,
         attribution: '© GéoRisques'
     });
+    
 
     // Créer un contrôle de couches
     const overlayMaps = {
