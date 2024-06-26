@@ -59,16 +59,20 @@ const UrlInondation = 'https://www.georisques.gouv.fr/api/v1/gaspar/azi';
   async function fetchRadonZones(codeInsee) {
     const params = { code_insee: codeInsee, page: 1, page_size: 10 };
     const urlWithParams = buildUrl(UrlRadon, params);
-
+  
+    console.log('URL envoyée pour RadonZones:', urlWithParams); // Affiche l'URL dans la console
+  
     try {
       const response = await fetch(urlWithParams);
       if (!response.ok) {
         throw new Error(`Erreur HTTP ! statut : ${response.status}`);
       }
-
+  
       const data = await response.json();
+      console.log('Données reçues pour RadonZones:', data); // Log des données reçues
+  
       if (data.data && data.data.length > 0) {
-        const radonRiskDescriptions = { 1: 'faible', 2: 'moyenne', 3: 'élevé' };
+        const radonRiskDescriptions = { "1": 'faible', "2": 'moyenne', "3": 'élevé' };
         const radonClass = data.data.map(item => radonRiskDescriptions[item.classe_potentiel]);
         return radonClass;
       } else {
@@ -98,15 +102,17 @@ const UrlInondation = 'https://www.georisques.gouv.fr/api/v1/gaspar/azi';
       console.error('Les coordonnées fournies ne sont pas au format correct ou sont en dehors des limites valides.');
       return null;
     }
-
+  
     const url = `${UrlClay}?latlon=${coordinates}`;
-
+  
+    console.log('URL envoyée pour ClayRisk:', url); // Affiche l'URL dans la console
+  
     try {
       const response = await fetch(url);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
+  
       const data = await response.json();
       return data;
     } catch (error) {
@@ -305,17 +311,17 @@ const UrlInondation = 'https://www.georisques.gouv.fr/api/v1/gaspar/azi';
       const coordinates = await geocodeAddress(address);
       if (coordinates) {
         centerMapOnCity(coordinates.latitude, coordinates.longitude);
-
+  
         const floodZones = await fetchFloodZones(coordinates.latitude, coordinates.longitude);
         const radonZones = await fetchRadonZones(coordinates.codeInsee);
         const clayRisk = await fetchClayRisk(coordinates.latitude, coordinates.longitude);
         const seismicZones = await fetchSeismicZones(1000, `${coordinates.longitude},${coordinates.latitude}`, coordinates.codeInsee);
         const majorRisks = await fetchMajorRisks(1000, `${coordinates.longitude},${coordinates.latitude}`, coordinates.codeInsee);
         const landslideRisks = await fetchLandslideRisk(1000, `${coordinates.longitude},${coordinates.latitude}`, coordinates.codeInsee);
-
+  
         const resultsContainer = document.getElementById('results');
         resultsContainer.innerHTML = '';
-
+  
         let cardTemplate = 
           `<div class="col-md-6 mb-3">
             <div class="card {cardClass}">
@@ -325,7 +331,7 @@ const UrlInondation = 'https://www.georisques.gouv.fr/api/v1/gaspar/azi';
               </div>
             </div>
           </div>`;
-
+  
         function getCardClass(riskLevel) {
           if (riskLevel === 'high') {
             return 'card-risk-high';
@@ -335,17 +341,17 @@ const UrlInondation = 'https://www.georisques.gouv.fr/api/v1/gaspar/azi';
             return 'card-risk-low';
           }
         }
-
+  
         let highRiskCards = [];
         let moderateRiskCards = [];
         let lowRiskCards = [];
-
+  
         function createCard(title, content, riskLevel) {
           const cardHtml = cardTemplate
             .replace('{cardClass}', getCardClass(riskLevel))
             .replace('{title}', title)
             .replace('{content}', content);
-
+  
           if (riskLevel === 'high') {
             highRiskCards.push(cardHtml);
           } else if (riskLevel === 'moderate') {
@@ -354,30 +360,34 @@ const UrlInondation = 'https://www.georisques.gouv.fr/api/v1/gaspar/azi';
             lowRiskCards.push(cardHtml);
           }
         }
-
+  
         const floodRiskLevel = floodZones && floodZones.length > 0 ? 'high' : 'low';
         createCard('Zones Inondables', floodRiskLevel === 'high' ? "L'adresse est en zone inondable." : "L'adresse n'est pas en zone inondable.", floodRiskLevel);
-
-        const radonRiskLevel = radonZones && radonZones.length > 0 ? (radonZones.includes('élevé') ? 'high' : 'moderate') : 'low';
-        createCard('Risques Radon', radonRiskLevel === 'high' ? "L'adresse est en zone à risque radon élevé." : (radonRiskLevel === 'moderate' ? "L'adresse est en zone à risque radon modéré." : "L'adresse n'est pas en zone à risque radon."), radonRiskLevel);
-
+  
+        const radonRiskLevel = radonZones && radonZones.length > 0 ? 
+          (radonZones.includes('élevé') ? 'high' : (radonZones.includes('moyenne') ? 'moderate' : 'low')) : 'low';
+        const radonContent = radonRiskLevel === 'high' ? "L'adresse est en zone à risque radon élevé." : 
+          (radonRiskLevel === 'moderate' ? "L'adresse est en zone à risque radon modéré." : 
+          "L'adresse n'est pas en zone à risque radon.");
+        createCard('Risques Radon', radonContent, radonRiskLevel);
+  
         const clayRiskLevel = clayRisk && clayRisk.exposition ? 
           (clayRisk.exposition.includes('élevée') ? 'high' : (clayRisk.exposition.includes('moyenne') || clayRisk.exposition.includes('modérée') ? 'moderate' : 'low')) : 'low';
-        createCard('Gonflement des Sols Argileux', clayRisk ? `Votre exposition au risque de gonflement des sols est considérée comme ${clayRisk.exposition}.` : "Pas de risque de gonflement des sols.", clayRiskLevel);
-
+        createCard('Gonflement des Sols Argileux', clayRisk ? `Votre exposition au risque de gonflement des sols est ${clayRisk.exposition}.` : "Pas de risque de gonflement des sols.", clayRiskLevel);
+  
         const seismicRiskLevel = seismicZones && seismicZones.length > 0 ? (seismicZones.some(zone => zone.sismicite === '4' || zone.sismicite === '5') ? 'high' : 'moderate') : 'low';
         createCard('Zones Sismiques', seismicRiskLevel === 'high' ? "L'adresse est en zone sismique avec un risque élevé." : (seismicRiskLevel === 'moderate' ? "L'adresse est en zone sismique avec un risque modéré." : "L'adresse n'est pas en zone sismique."), seismicRiskLevel);
-
+  
         const majorRiskLevel = majorRisks && majorRisks.length > 0 ? 'high' : 'low';
-        createCard('Risques Majeurs', majorRiskLevel === 'high' ? majorRisks.map(risk => `Risque majeur publié en ${risk.annee_publication} pour la commune ${risk.libelle_commune}, renseigner vous en mairie pour plus d'information.`).join('<br>') : "Aucun risque majeur trouvé pour cette adresse.", majorRiskLevel);
-
+        createCard('Risques Majeurs', majorRiskLevel === 'high' ? majorRisks.map(risk => `Risque majeur publié en ${risk.annee_publication} pour la commune ${risk.libelle_commune}, renseignez-vous en mairie pour plus d'information.`).join('<br>') : "Aucun risque majeur trouvé pour cette adresse.", majorRiskLevel);
+  
         const landslideRiskLevel = landslideRisks && landslideRisks.length > 0 ? 'high' : 'low';
         createCard('Risques de mouvement de terrain', landslideRiskLevel === 'high' ? landslideRisks.map(risk => `Type: ${risk.type}, Lieu: ${risk.lieu}, Date: ${risk.date_debut}`).join('<br>') : "Aucun risque de mouvement de terrain trouvé pour cette adresse.", landslideRiskLevel);
-
+  
         resultsContainer.innerHTML += highRiskCards.join('');
         resultsContainer.innerHTML += moderateRiskCards.join('');
         resultsContainer.innerHTML += lowRiskCards.join('');
-
+  
         const downloadButton = document.getElementById('downloadReportButton');
         downloadButton.style.display = 'block';
         downloadButton.addEventListener('click', async function() {
@@ -465,6 +475,27 @@ const UrlInondation = 'https://www.georisques.gouv.fr/api/v1/gaspar/azi';
       attribution: '© GéoRisques'
     });
 
+    const nappeLayer = L.tileLayer.wms('https://georisques.gouv.fr/services', {
+        layers: 'REMNAPPE_FR',
+        format: 'image/png',
+        transparent: true,
+        attribution: '© GéoRisques'
+      });
+
+      const pollutionLayer = L.tileLayer.wms('https://georisques.gouv.fr/services', {
+        layers: 'SSP_CLASSIFICATION_SIS',
+        format: 'image/png',
+        transparent: true,
+        attribution: '© GéoRisques'
+      });
+
+      const volcanLayer = L.tileLayer.wms('https://georisques.gouv.fr/services', {
+        layers: 'SUP_MINIER',
+        format: 'image/png',
+        transparent: true,
+        attribution: '© GéoRisques'
+      });
+
     const overlayMaps = {
       "Zones Inondables": floodLayer,
       "Risques Radon": radonLayer,
@@ -473,6 +504,9 @@ const UrlInondation = 'https://www.georisques.gouv.fr/api/v1/gaspar/azi';
       "PPR mouvement de terrain": cavityLayer,
       "risque industriel": industryLayer,
       "PPR feux de forets": forestFireLayer,
+      "Risque remontée des nappes": nappeLayer,
+      "Site Polluées": pollutionLayer,
+      "Zone volcanique": volcanLayer,
     };
 
     const controlLayers = L.control.layers(null, overlayMaps).addTo(map);
@@ -580,7 +614,7 @@ const UrlInondation = 'https://www.georisques.gouv.fr/api/v1/gaspar/azi';
 
       const clayRiskLevel = clayRisk && clayRisk.exposition ? 
         (clayRisk.exposition.includes('élevée') ? 'high' : (clayRisk.exposition.includes('moyenne') || clayRisk.exposition.includes('modérée') ? 'moderate' : 'low')) : 'low';
-      createCard('Gonflement des Sols Argileux', clayRisk ? `Votre exposition au risque de gonflement des sols est considérée comme ${clayRisk.exposition}.` : "Pas de risque de gonflement des sols.", clayRiskLevel);
+      createCard('Gonflement des Sols Argileux', clayRisk ? `Votre exposition au risque de gonflement des sols est ${clayRisk.exposition}.` : "Pas de risque de gonflement des sols.", clayRiskLevel);
 
       const seismicRiskLevel = seismicZones && seismicZones.length > 0 ? (seismicZones.some(zone => zone.sismicite === '4' || zone.sismicite === '5') ? 'high' : 'moderate') : 'low';
       createCard('Zones Sismiques', seismicRiskLevel === 'high' ? "L'adresse est en zone sismique avec un risque élevé." : (seismicRiskLevel === 'moderate' ? "L'adresse est en zone sismique avec un risque modéré." : "L'adresse n'est pas en zone sismique."), seismicRiskLevel);
