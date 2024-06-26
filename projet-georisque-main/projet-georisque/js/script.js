@@ -268,30 +268,36 @@ const UrlInondation = 'https://www.georisques.gouv.fr/api/v1/gaspar/azi';
     }
   }
 
-  async function generateReport(codeInsee, latlon, address) {
+async function generateReport(codeInsee, latlon, address) {
     const params = { code_insee: codeInsee, latlon: latlon, adresse: address };
     const urlWithParams = buildUrl(UrlReport, params);
 
     try {
-      const response = await fetch(urlWithParams);
-      if (!response.ok) {
-        throw new Error(`Erreur HTTP ! statut : ${response.status}`);
-      }
+        const response = await fetch(urlWithParams);
+        if (!response.ok) {
+            throw new Error(`Erreur HTTP ! statut : ${response.status}`);
+        }
 
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.style.display = 'none';
-      a.href = url;
-      a.download = 'rapport.pdf';
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      console.log('Rapport PDF généré avec succès.');
+        const blob = await response.blob();
+        const reader = new FileReader();
+
+        reader.onloadend = function() {
+            const base64data = reader.result;
+            localStorage.setItem('rapport_pdf', base64data);
+            console.log('Rapport PDF généré et stocké avec succès.');
+
+            // Créer un lien pour télécharger le PDF
+            const link = document.createElement('a');
+            link.href = base64data;
+            link.download = 'rapport.pdf';
+            link.click();
+        };
+
+        reader.readAsDataURL(blob);
     } catch (error) {
-      console.error('Erreur lors de la génération du rapport PDF :', error);
+        console.error('Erreur lors de la génération du rapport PDF :', error);
     }
-  }
+}
 
   function groupSeismicZonesByRisk(seismicZones) {
     const grouped = {};
@@ -365,7 +371,7 @@ const UrlInondation = 'https://www.georisques.gouv.fr/api/v1/gaspar/azi';
         createCard('Zones Inondables', floodRiskLevel === 'high' ? "L'adresse est en zone inondable." : "L'adresse n'est pas en zone inondable.", floodRiskLevel);
   
         const radonRiskLevel = radonZones && radonZones.length > 0 ? 
-          (radonZones.includes('élevé') ? 'high' : (radonZones.includes('moyenne') ? 'moderate' : 'low')) : 'low';
+          (radonZones.includes('élevé') ? 'high' : 'moderate') : 'low';
         const radonContent = radonRiskLevel === 'high' ? "L'adresse est en zone à risque radon élevé." : 
           (radonRiskLevel === 'moderate' ? "L'adresse est en zone à risque radon modéré." : 
           "L'adresse n'est pas en zone à risque radon.");
@@ -605,6 +611,116 @@ const UrlInondation = 'https://www.georisques.gouv.fr/api/v1/gaspar/azi';
           lowRiskCards.push(cardHtml);
         }
       }
+       // Fonction pour récupérer et afficher les rapports PDF depuis localStorage
+       function displayReports() {
+        const reportsContainer = document.querySelector('.dropdown-content-documents');
+        reportsContainer.innerHTML = ''; // Clear any existing content
+
+        const reportKeys = Object.keys(localStorage).filter(key => key.startsWith('rapport_pdf_'));
+        if (reportKeys.length > 0) {
+            reportKeys.forEach(key => {
+                const address = key.replace('rapport_pdf_', '').replace(/_/g, ' ');
+                const base64data = localStorage.getItem(key);
+                if (base64data) {
+                    const blob = b64toBlob(base64data, 'application/pdf');
+                    const url = URL.createObjectURL(blob);
+
+                    const reportLink = document.createElement('a');
+                    reportLink.href = url;
+                    reportLink.textContent = `Rapport PDF pour ${address}`;
+                    reportLink.target = '_blank';
+                    reportLink.style.display = 'block';
+
+                    reportsContainer.appendChild(reportLink);
+                } else {
+                    console.error(`No data found for key: ${key}`);
+                }
+            });
+        } else {
+            const noReportsMessage = document.createElement('p');
+            noReportsMessage.textContent = 'Aucun rapport PDF trouvé.';
+            reportsContainer.appendChild(noReportsMessage);
+        }
+    }
+
+    // Fonction pour convertir base64 en Blob
+    function b64toBlob(b64Data, contentType, sliceSize = 512) {
+        const byteCharacters = atob(b64Data);
+        const byteArrays = [];
+
+        for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+            const slice = byteCharacters.slice(offset, offset + sliceSize);
+            const byteNumbers = new Array(slice.length);
+            for (let i = 0; i < slice.length; i++) {
+                byteNumbers[i] = slice.charCodeAt(i);
+            }
+            const byteArray = new Uint8Array(byteNumbers);
+            byteArrays.push(byteArray);
+        }
+
+        return new Blob(byteArrays, { type: contentType });
+    }
+
+    // Fonction pour générer le rapport PDF, le télécharger et le stocker dans le localStorage
+    async function generateReport(codeInsee, latlon, address) {
+        const params = { code_insee: codeInsee, latlon: latlon, adresse: address };
+        const urlWithParams = buildUrl(UrlReport, params);
+
+        try {
+            const response = await fetch(urlWithParams);
+            if (!response.ok) {
+                throw new Error(`Erreur HTTP ! statut : ${response.status}`);
+            }
+
+            const blob = await response.blob();
+            const reader = new FileReader();
+
+            reader.onloadend = function () {
+                const base64data = reader.result.split(',')[1]; // Extraire la partie base64
+                const key = `rapport_pdf_${address.replace(/\s/g, '_')}`; // Clé unique pour chaque rapport
+
+                // Debugging logs
+                console.log('Base64 Data:', base64data);
+                console.log('LocalStorage Key:', key);
+
+                try {
+                    localStorage.setItem(key, base64data);
+                    console.log('Rapport PDF stocké dans le localStorage avec succès.');
+
+                    // Mettre à jour la liste des rapports PDF
+                    displayReports();
+                } catch (error) {
+                    console.error('Erreur lors du stockage du rapport PDF dans le localStorage:', error);
+                }
+
+                // Créer un lien de téléchargement et cliquer dessus pour télécharger le PDF
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = 'rapport.pdf';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+
+                console.log('Rapport PDF téléchargé avec succès.');
+            };
+
+            reader.readAsDataURL(blob);
+        } catch (error) {
+            console.error('Erreur lors de la génération du rapport PDF :', error);
+        }
+    }
+
+    // Appeler displayReports lors du chargement de la page
+    document.addEventListener('DOMContentLoaded', function () {
+        if (document.querySelector('.dropdown-content-documents')) {
+            displayReports();
+        }
+
+        // Attacher displayReports au clic sur le bouton "Mes recherches et documents"
+        document.querySelector('.dropdown-button-documents').addEventListener('click', displayReports);
+    });
 
       const floodRiskLevel = floodZones && floodZones.length > 0 ? 'high' : 'low';
       createCard('Zones Inondables', floodRiskLevel === 'high' ? "L'adresse est en zone inondable." : "L'adresse n'est pas en zone inondable.", floodRiskLevel);
