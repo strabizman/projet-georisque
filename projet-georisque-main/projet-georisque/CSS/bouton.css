@@ -1,15 +1,17 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 0;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+/* Ajoutez vos styles CSS personnalisés ici */
+
+.main-container {
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    margin: 20px auto;
+    width: 90%;
+    max-width: 1200px;
 }
 
 .dropdown {
-    margin: 10px 0;
+    margin-bottom: 20px;
 }
 
 .dropdown-button {
@@ -33,7 +35,6 @@ body {
     background-color: #f9f9f9;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     border-radius: 4px;
-    margin-top: 5px;
     padding: 10px;
 }
 
@@ -53,28 +54,55 @@ body {
     background-color: #ddd;
 }
 
-#edit-form {
-    display: flex;
-    flex-direction: column;
-}
-
-#edit-input {
-    padding: 8px;
-    margin-top: 5px;
-    margin-bottom: 10px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-}
-
-#edit-form button {
-    padding: 8px;
+footer {
+    text-align: center;
+    padding: 20px;
     background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+    color: #fff;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
 }
 
-#edit-form button:hover {
-    background-color: #0056b3;
+.profile-img {
+    width: 100px; /* Ajuste la largeur de l'image selon tes besoins */
+    height: 100px; /* Ajuste la hauteur de l'image selon tes besoins */
+}
+
+.centered-title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#save {
+    background-color: #007bff;
+    color: #ffffff;
+}
+
+
+/* Media Queries pour la responsivité */
+@media (min-width: 768px) {
+    .main-container {
+        width: 80%;
+    }
+
+    .profile-img {
+        width: 150px;
+        height: 150px;
+    }
+}
+
+@media (min-width: 992px) {
+    .main-container {
+        width: 70%;
+    }
+}
+
+@media (min-width: 1200px) {
+    .main-container {
+        width: 60%;
+        margin-top: 100px; /* Ajout d'une marge supérieure pour abaisser le conteneur */
+    }
 }
